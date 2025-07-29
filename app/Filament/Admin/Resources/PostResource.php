@@ -49,6 +49,7 @@ class PostResource extends Resource
                                     Forms\Components\FileUpload::make('image')
                                         ->label('Hình ảnh đại diện')
                                         ->image()
+                                        ->disk('public')
                                         ->directory('news/images')
                                         ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']),
 
