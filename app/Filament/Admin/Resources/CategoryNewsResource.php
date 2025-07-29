@@ -99,7 +99,8 @@ class CategoryNewsResource extends Resource implements HasShieldPermissions
                                 Forms\Components\FileUpload::make('icon')
                                     ->label('Icon')
                                     ->image()
-                                    ->directory('Danh mục es/icons')
+                                    ->disk('public')
+                                    ->directory('categoryNew/images')
                                     ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'])
                                     ->imageEditor(),
 

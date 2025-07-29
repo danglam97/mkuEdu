@@ -100,7 +100,8 @@ class MenusResource extends Resource implements HasShieldPermissions
                                 Forms\Components\FileUpload::make('icon')
                                     ->label('Icon')
                                     ->image()
-                                    ->directory('menues/icons')
+                                    ->disk('public')
+                                    ->directory('menues/images')
                                     ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'])
                                     ->imageEditor(),
 
