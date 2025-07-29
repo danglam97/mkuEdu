@@ -26,6 +26,7 @@ class PostResource extends Resource
     protected static ?string $activeNavigationIcon = 'heroicon-s-folder';
     protected static ?string $navigationGroup = 'Quản lý menu';
     protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -93,13 +94,62 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                //
-            ])
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Tên tin tức')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('description')
+                    ->label('Mô tả ngắn')
+                    ->limit(50),
+
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Hình ảnh')
+                    ->disk('public'), // tùy thuộc cấu hình filesystem
+
+                Tables\Columns\TextColumn::make('category.name') // nếu bạn có quan hệ ->category()
+                ->label('Danh mục')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('is_home')
+                    ->label('Trang chủ')
+                    ->formatStateUsing(fn($state) => $state ? 'Có' : 'Không')
+                    ->sortable(),
+
+                // Người tạo
+                Tables\Columns\TextColumn::make('createdBy.name') // assuming quan hệ với User
+                ->label('Người tạo')
+                    ->sortable()
+                    ->placeholder('—'),
+
+                // Người sửa
+                Tables\Columns\TextColumn::make('updatedBy.name') // assuming quan hệ với User
+                ->label('Người sửa')
+                    ->sortable()
+                    ->placeholder('—'),
+                Tables\Columns\TextColumn::make('approverBy.name') // assuming quan hệ với User
+                ->label('Người duyệt')
+                    ->sortable()
+                    ->placeholder('—'),
+
+                // Thời gian tạo
+                Tables\Columns\TextColumn::make('created_date')
+                    ->label('Ngày tạo')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+
+                // Thời gian sửa
+                Tables\Columns\TextColumn::make('updated_date')
+                    ->label('Ngày sửa')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+            ]) ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->tooltip('chỉnh sửa')->iconButton(),
+                Tables\Actions\DeleteAction::make()->tooltip('xóa')->iconButton() ->successNotificationTitle('Đã xóa bài viết thành công'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -123,7 +173,8 @@ class PostResource extends Resource
             'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
     }
-    public static function  getCategoryOptions($categories = null, $prefix = ''): array
+
+    public static function getCategoryOptions($categories = null, $prefix = ''): array
     {
         $categories = $categories ?? Menus::whereNull('id_parent')->with('children')->get();
 
@@ -139,6 +190,7 @@ class PostResource extends Resource
 
         return $result;
     }
+
     public static function getNavigationBadge(): ?string
     {
         return Utils::isResourceNavigationBadgeEnabled()

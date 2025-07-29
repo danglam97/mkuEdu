@@ -28,14 +28,31 @@ class Post extends Model
         'isdelete',
         'isactive',
     ];
+
     public static function booted()
     {
         static::saving(function ($post) {
             $post->slug = Str::slug($post->name);
         });
     }
+
     public function category()
     {
         return $this->belongsTo(Menus::class, 'id_category');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+    public function approverBy()
+    {
+        return $this->belongsTo(User::class, 'approver_by');
     }
 }
