@@ -15,13 +15,14 @@ Chào mừng bạn đến với **Base Filament**, một dự án mẫu sử d�
 ### 1. Clone dự án
 Clone repository từ GitHub và di chuyển vào thư mục dự án:
 ```bash
-git clone https://github.com/danglam97/mkuEdu
+git clone https://github.com/danglam97/mkuEdu.git
 cd mkuEdu
 ```
 
 ### 2. Cài đặt dependencies
 Cài đặt các gói PHP cần thiết thông qua Composer:
 ```bash
+xóa file composer.lock rồi chạy
 composer install
 ```
 
@@ -99,26 +100,11 @@ php artisan tinker
 > $user = User::find(1);
 > $user->assignRole('super_admin');
 ```
-
-## 🔧 Mẹo và lưu ý
-- **Debug lỗi**: Kiểm tra log tại `storage/logs/laravel.log` nếu gặp sự cố. Chạy `composer dump-autoload` hoặc `php artisan cache:clear` để làm mới cấu hình.
-- **Quyền thư mục**: Đảm bảo thư mục `storage` và `bootstrap/cache` có quyền ghi. Ví dụ:
-  ```bash
-  chmod -R 775 storage bootstrap/cache
-  ```
-- **Cập nhật dependency**: Chạy `composer update` để đảm bảo các gói mới nhất.
-- **Tùy chỉnh giao diện**: Các thay đổi về giao diện và logic CMS thường được thực hiện trong các file resource (`List*.php`, `Create*.php`, `Edit*.php`).
-
 ## 📚 Tài liệu tham khảo
 - [Filament PHP Documentation](https://filamentphp.com/docs)
 - [Laravel Documentation](https://laravel.com/docs)
 
 
 ---
-
-## 🙋 Hỗ trợ
-Nếu bạn gặp vấn đề hoặc cần hỗ trợ thêm, hãy:
-- Mở issue trên [GitHub](https://github.com/dangphuong3110/base-filament/issues).
-- Liên hệ tác giả qua email hoặc các kênh được cung cấp trong repository.
 
 Chúc bạn thành công với dự án! 🎉
