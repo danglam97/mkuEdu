@@ -28,7 +28,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?string $navigationGroup = 'Quản lý người dùng';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -202,15 +202,15 @@ class RoleResource extends Resource implements HasShieldPermissions
         return __('filament-shield::filament-shield.nav.role.icon');
     }
 
-    public static function getNavigationSort(): ?int
-    {
-        return Utils::getResourceNavigationSort();
-    }
+//    public static function getNavigationSort(): ?int
+//    {
+//        return Utils::getResourceNavigationSort();
+//    }
 
-    public static function getSubNavigationPosition(): SubNavigationPosition
-    {
-        return Utils::getSubNavigationPosition() ?? static::$subNavigationPosition;
-    }
+//    public static function getSubNavigationPosition(): SubNavigationPosition
+//    {
+//        return Utils::getSubNavigationPosition() ?? static::$subNavigationPosition;
+//    }
 
     public static function getSlug(): string
     {
