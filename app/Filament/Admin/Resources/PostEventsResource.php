@@ -2,11 +2,13 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PostResource\Pages;
-use App\Filament\Admin\Resources\PostResource\RelationManagers;
+use App\Filament\Admin\Resources\PostEventsResource\Pages;
+use App\Filament\Admin\Resources\PostEventsResource\RelationManagers;
 use App\Forms\Components\CKEditor;
-use App\Models\Menus;
-use App\Models\Post;
+use App\Models\CategoryEvents;
+use App\Models\CategoryNews;
+use App\Models\PostEvents;
+use App\Models\PostNews;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
@@ -21,17 +23,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PostResource extends Resource implements HasShieldPermissions
+class PostEventsResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
 
-    protected static ?string $model = Post::class;
+    protected static ?string $model = PostEvents::class;
 
-    protected static ?string $modelLabel = 'Bài viết';
+    protected static ?string $modelLabel = 'Bài viết sự kiện';
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-folder';
-    protected static ?string $navigationGroup = 'Quản lý menu';
+    protected static ?string $navigationGroup = 'Quản lý sự kiện';
     protected static ?int $navigationSort = 2;
     public static function getPermissionPrefixes(): array
     {
@@ -48,14 +50,14 @@ class PostResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make('Tạo/Cập nhật Tin tức')
+                Forms\Components\Tabs::make('Tạo/Cập nhật sự kiện')
                     ->columnSpanFull()
                     ->tabs([
                         Forms\Components\Tabs\Tab::make('Thông tin chính')
                             ->schema([
                                 Forms\Components\Grid::make(1)->schema([
                                     Forms\Components\TextInput::make('name')
-                                        ->label('Tên tin tức')
+                                        ->label('Tên sự kiện')
                                         ->required()
                                         ->maxLength(500),
 
@@ -77,7 +79,7 @@ class PostResource extends Resource implements HasShieldPermissions
                                         ->preload()
                                         ->required(),
                                     CKEditor::make('contents')
-                                        ->label('Nội dung tin tức')->required(),
+                                        ->label('Nội dung sự kiện')->required(),
                                     Forms\Components\TextInput::make('link_url')
                                         ->label('Link tập tin')
                                         ->maxLength(550),
@@ -113,7 +115,7 @@ class PostResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Tên tin tức')
+                    ->label('Tên sự kiện')
                     ->searchable()
                     ->sortable(),
 
@@ -169,13 +171,13 @@ class PostResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make()
                     ->tooltip('Xem chi tiết')
                     ->iconButton()
-                    ->modalHeading('Thông tin bài viết')
+                    ->modalHeading('Thông tin sự kiện')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Đóng')
                     ->infolist([
                         Grid::make(2)->schema([
                             TextEntry::make('name')
-                                ->label('Tên bài viết')
+                                ->label('Tên sự kiện')
                                 ->inlineLabel(),
 
                             TextEntry::make('description')
@@ -215,7 +217,7 @@ class PostResource extends Resource implements HasShieldPermissions
 
                         Grid::make()->schema([
                             TextEntry::make('contents')
-                                ->label('Nội dung tin tức')
+                                ->label('Nội dung sự kiện')
                                 ->inlineLabel()
                                 ->columnSpanFull()
                                 ->html(), // nếu nội dung có thẻ HTML từ CKEditor
@@ -240,15 +242,15 @@ class PostResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPosts::route('/'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
+            'index' => Pages\ListPostEvents::route('/'),
+            'create' => Pages\CreatePostEvents::route('/create'),
+            'edit' => Pages\EditPostEvents::route('/{record}/edit'),
         ];
     }
 
     public static function getCategoryOptions($categories = null, $prefix = ''): array
     {
-        $categories = $categories ?? Menus::whereNull('id_parent')->with('children')->get();
+        $categories = $categories ?? CategoryEvents::whereNull('id_parent')->with('children')->get();
 
         $result = [];
 
