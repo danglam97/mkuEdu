@@ -22,6 +22,7 @@ class CategoryEvents extends Model
         'created_by',
         'updated_by',
         'is_active',
+        'position',
     ];
     public static function booted()
     {

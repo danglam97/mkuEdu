@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('image', 550)->nullable()->comment('Hình ảnh đại diện');
 
             $table->unsignedBigInteger('id_category')->comment('ID danh mục tin (FK)');
-            $table->text('contents')->nullable()->comment('Nội dung tin tức/bài viết');
+            $table->longText('contents')->nullable()->comment('Nội dung tin tức/bài viết');
 
             $table->integer('total_view')->default(0)->comment('Số lượt xem');
             $table->string('link_url', 550)->nullable()->comment('Link tập tin');
