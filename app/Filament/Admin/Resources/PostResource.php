@@ -7,24 +7,17 @@ use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Forms\Components\CKEditor;
 use App\Models\Menus;
 use App\Models\Post;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PostResource extends Resource implements HasShieldPermissions
+class PostResource extends Resource
 {
-    use HasShieldFormComponents;
-
     protected static ?string $model = Post::class;
 
     protected static ?string $modelLabel = 'Bài viết';
@@ -33,17 +26,7 @@ class PostResource extends Resource implements HasShieldPermissions
     protected static ?string $activeNavigationIcon = 'heroicon-s-folder';
     protected static ?string $navigationGroup = 'Quản lý menu';
     protected static ?int $navigationSort = 2;
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-        ];
-    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -130,7 +113,7 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('is_home')
-                    ->label('Hiển thị lên trang chủ')
+                    ->label('Trang chủ')
                     ->formatStateUsing(fn($state) => $state ? 'Có' : 'Không')
                     ->sortable(),
 
@@ -166,67 +149,13 @@ class PostResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->tooltip('Xem chi tiết')
-                    ->iconButton()
-                    ->modalHeading('Thông tin bài viết')
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Đóng')
-                    ->infolist([
-                        Grid::make(2)->schema([
-                            TextEntry::make('name')
-                                ->label('Tên bài viết')
-                                ->inlineLabel(),
-
-                            TextEntry::make('description')
-                                ->label('Mô tả ngắn')
-                                ->inlineLabel(),
-
-                            TextEntry::make('category.name')
-                                ->label('Danh mục bài viết')
-                                ->inlineLabel(),
-
-                            TextEntry::make('link_url')
-                                ->label('Link tập tin')
-                                ->inlineLabel()->hidden(fn ($record) => !$record->link_url),
-
-                            TextEntry::make('is_home')
-                                ->label('Hiển thị lên trang chủ')
-                                ->inlineLabel()
-                                ->formatStateUsing(fn ($state) => $state ? '✔ Có' : '✘ Không'),
-
-                            TextEntry::make('created_at')
-                                ->label('Ngày tạo')
-                                ->inlineLabel()
-                                ->dateTime('d/m/Y H:i'),
-
-                            TextEntry::make('updated_at')
-                                ->label('Ngày sửa')
-                                ->inlineLabel()
-                                ->dateTime('d/m/Y H:i'),
-                        ]),
-
-                        Grid::make()->schema([
-                            ImageEntry::make('image')
-                                ->label('Hình ảnh đại diện')
-                                ->columnSpanFull()
-                                ->hidden(fn ($record) => !$record->image),
-                        ]),
-
-                        Grid::make()->schema([
-                            TextEntry::make('contents')
-                                ->label('Nội dung tin tức')
-                                ->inlineLabel()
-                                ->columnSpanFull()
-                                ->html(), // nếu nội dung có thẻ HTML từ CKEditor
-                        ]),
-                    ]),
-
                 Tables\Actions\EditAction::make()->tooltip('chỉnh sửa')->iconButton(),
                 Tables\Actions\DeleteAction::make()->tooltip('xóa')->iconButton() ->successNotificationTitle('Đã xóa bài viết thành công'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
