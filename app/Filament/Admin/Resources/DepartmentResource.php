@@ -30,7 +30,7 @@ class DepartmentResource extends Resource implements HasShieldPermissions
 
     protected static ?string $activeNavigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Quản lý người dùng';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
     public static function getPermissionPrefixes(): array
     {
         return [
