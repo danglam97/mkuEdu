@@ -24,6 +24,9 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'department_id',
     ];
 
     /**
@@ -53,5 +56,9 @@ class User extends Authenticatable implements FilamentUser
     {
         // TODO: Implement canAccessPanel() method.
         return true;
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }
