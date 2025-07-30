@@ -27,6 +27,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->nullable()->comment('Mã người tạo');
             $table->unsignedBigInteger('updated_by')->nullable()->comment('Mã người sửa');
             $table->tinyInteger('is_active')->default(1)->comment('Trạng thái hiển thị (1: Hiển thị, 0: Ẩn)');
+            $table->tinyInteger('position')->nullable()->comment('vị trí hiển thị');
             $table->timestamps();
         });
     }
