@@ -268,14 +268,14 @@ class CategoryEventsResource extends Resource implements HasShieldPermissions
                     ->before(function ($record, $action) {
                         if (!$record->canBeDeleted()) {
                             Notification::make()
-                                ->title('Không thể xoá Memu')
-                                ->body('Memu này vẫn còn Danh mục  con. Vui lòng xoá Memu con trước.')
+                                ->title('Không thể xoá Menu')
+                                ->body('Menu này có bài viết hoặc menu con. Vui lòng xóa chúng trước.')
                                 ->danger()
                                 ->send();
 
                             $action->cancel(); // hủy xoá
                         }
-                    })
+                    })->successNotificationTitle('Đã xóa Menu thành công')
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

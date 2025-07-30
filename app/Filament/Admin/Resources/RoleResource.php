@@ -10,6 +10,7 @@ use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -122,7 +123,20 @@ class RoleResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record,$action) {
+
+                    if ($record->users()->count() > 0) {
+                        Notification::make()
+                            ->title('Không thể xóa')
+                            ->body('Vai trò này đang được gán cho người dùng. Hãy gỡ vai trò khỏi tất cả người dùng trước khi xóa.')
+                            ->danger()
+                            ->persistent()
+                            ->send();
+                        $action->cancel();
+                    }
+
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

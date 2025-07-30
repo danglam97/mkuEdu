@@ -10,6 +10,7 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -146,7 +147,17 @@ class DepartmentResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->tooltip('sửa')->iconButton(),
-                Tables\Actions\DeleteAction::make()->tooltip('Xóa')->iconButton()->successNotificationTitle('Đã xóa phòng ban thành công'),
+                Tables\Actions\DeleteAction::make()->tooltip('Xóa')->iconButton()->before(function ($record, $action) {
+                    if (!$record->canBeDeleted()) {
+                        Notification::make()
+                            ->title('Không thể xoá Phòng ban')
+                            ->body('Phòng ban này vẫn còn phòng ban con và người dùng. Vui lòng xoá phòng ban con và người dùng trước.')
+                            ->danger()
+                            ->send();
+
+                        $action->cancel(); // hủy xoá
+                    }
+                })->successNotificationTitle('Đã xóa phòng ban thành công'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

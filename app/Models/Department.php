@@ -23,5 +23,13 @@ class Department extends Model
     {
         return $this->hasMany(self::class, 'parent_id');
     }
+    public function users()
+    {
+        return $this->hasMany(User::class, 'department_id');
+    }
+    public function canBeDeleted(): bool
+    {
+        return !$this->children()->exists() && !$this->users()->exists();
+    }
 }
 
