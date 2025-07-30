@@ -60,9 +60,13 @@ class CategoryEvents extends Model
             self::loopCategories($menu->id, $grouped, $result, $prefix . '-- ');
         }
     }
+    public function posts()
+    {
+        return $this->hasMany(PostEvents::class, 'id_category'); // hoặc 'id_category' tùy cột foreign key
+    }
     public function canBeDeleted(): bool
     {
-        return $this->children()->count() === 0;
+        return $this->children()->count() === 0 && $this->posts()->count() === 0;
     }
     public function createdBy()
     {
