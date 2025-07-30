@@ -2,11 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PostResource\Pages;
-use App\Filament\Admin\Resources\PostResource\RelationManagers;
+use App\Filament\Admin\Resources\PostNewsResource\Pages;
+use App\Filament\Admin\Resources\PostNewsResource\RelationManagers;
 use App\Forms\Components\CKEditor;
-use App\Models\Menus;
-use App\Models\Post;
+use App\Models\CategoryNews;
+use App\Models\PostNews;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
@@ -21,17 +21,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PostResource extends Resource implements HasShieldPermissions
+class PostNewsResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
 
-    protected static ?string $model = Post::class;
+    protected static ?string $model = PostNews::class;
 
-    protected static ?string $modelLabel = 'Bài viết';
+    protected static ?string $modelLabel = 'Bài viết tin tức';
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-folder';
-    protected static ?string $navigationGroup = 'Quản lý menu';
+    protected static ?string $navigationGroup = 'Quản lý tin tức';
     protected static ?int $navigationSort = 2;
     public static function getPermissionPrefixes(): array
     {
@@ -240,15 +240,15 @@ class PostResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPosts::route('/'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
+            'index' => Pages\ListPostNews::route('/'),
+            'create' => Pages\CreatePostNews::route('/create'),
+            'edit' => Pages\EditPostNews::route('/{record}/edit'),
         ];
     }
 
     public static function getCategoryOptions($categories = null, $prefix = ''): array
     {
-        $categories = $categories ?? Menus::whereNull('id_parent')->with('children')->get();
+        $categories = $categories ?? CategoryNews::whereNull('id_parent')->with('children')->get();
 
         $result = [];
 

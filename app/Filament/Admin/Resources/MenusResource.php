@@ -112,6 +112,15 @@ class MenusResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Toggle::make('is_active')
                                     ->label('Kích hoạt')
                                     ->default(true),
+                                Forms\Components\TextInput::make('position')
+                                    ->label('Vị trí')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->placeholder('VD: 1, 2, 3...')
+                                    ->default(function () {
+                                        return \App\Models\Menus::max('position') + 1;
+                                    })
+                                    ->helperText('Giá trị nhỏ hơn sẽ hiển thị trước'),
                             ]),
 
                         // Tab 2: SEO
@@ -184,8 +193,11 @@ class MenusResource extends Resource implements HasShieldPermissions
                 Tables\Columns\BadgeColumn::make('type') // Loại menu
                 ->label('Loại menu')
                     ->formatStateUsing(fn ($state) => $state ? 'Nội dung' : 'Liên kết'),
+                Tables\Columns\TextColumn::make('position')
+                    ->label('Vị trí')
+                    ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('position')
             ->filters([
                 //
             ])

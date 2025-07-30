@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\CategoryEventsResource\Pages;
 use App\Filament\Admin\Resources\CategoryEventsResource\RelationManagers;
 use App\Models\CategoryEvents;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -112,6 +113,15 @@ class CategoryEventsResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Toggle::make('is_active')
                                     ->label('Kích hoạt')
                                     ->default(true),
+                                Forms\Components\TextInput::make('position')
+                                    ->label('Vị trí')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->placeholder('VD: 1, 2, 3...')
+                                    ->default(function () {
+                                        return \App\Models\CategoryEvents::max('position') + 1;
+                                    })
+                                    ->helperText('Giá trị nhỏ hơn sẽ hiển thị trước'),
                             ]),
 
                         // Tab 2: SEO
@@ -184,8 +194,11 @@ class CategoryEventsResource extends Resource implements HasShieldPermissions
                 Tables\Columns\BadgeColumn::make('type') // Loại Danh mục
                 ->label('Loại Danh mục ')
                     ->formatStateUsing(fn ($state) => $state ? 'Nội dung' : 'Liên kết'),
+                Tables\Columns\TextColumn::make('position')
+                    ->label('Vị trí')
+                    ->sortable(),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('position')
             ->filters([
                 //
             ])
@@ -284,5 +297,11 @@ class CategoryEventsResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateCategoryEvents::route('/create'),
             'edit' => Pages\EditCategoryEvents::route('/{record}/edit'),
         ];
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return Utils::isResourceNavigationBadgeEnabled()
+            ? strval(static::getEloquentQuery()->count())
+            : null;
     }
 }
