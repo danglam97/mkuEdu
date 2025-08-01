@@ -10,6 +10,7 @@ use App\Models\Post;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
@@ -20,7 +21,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Illuminate\Support\Facades\Auth;
 class PostResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
@@ -42,6 +43,8 @@ class PostResource extends Resource implements HasShieldPermissions
             'update',
             'delete',
             'delete_any',
+            'approve',
+            'refuse',
         ];
     }
     public static function form(Form $form): Form
@@ -180,7 +183,7 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Đóng')
                     ->infolist([
-                        Grid::make(2)->schema([
+                        Grid::make(1)->schema([
                             TextEntry::make('name')
                                 ->label('Tên bài viết')
                                 ->inlineLabel(),
@@ -225,13 +228,101 @@ class PostResource extends Resource implements HasShieldPermissions
                                 ->label('Nội dung tin tức')
                                 ->inlineLabel()
                                 ->columnSpanFull()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 180px; overflow-y: auto; padding: 8px;',
+                                ])
+                                ->prose()
                                 ->html(), // nếu nội dung có thẻ HTML từ CKEditor
+
                         ]),
                     ]),
 
                 Tables\Actions\EditAction::make()->tooltip('chỉnh sửa')->iconButton(),
                 Tables\Actions\DeleteAction::make()->tooltip('xóa')->iconButton() ->successNotificationTitle('Đã xóa bài viết thành công'),
-            ])
+                Tables\Actions\Action::make('reviewAndApprove')
+                    ->label('Xem & Duyệt')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn($record) => $record->isactive != 1)
+                    ->record(fn($record) => $record)
+                    ->modalHeading('Xem chi tiết bài viết')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Đóng')
+                    ->infolist([
+                        Grid::make(1)->schema([
+                            TextEntry::make('name')
+                                ->label('Tên bài viết')
+                                ->inlineLabel(),
+
+                            TextEntry::make('description')
+                                ->label('Mô tả ngắn')
+                                ->inlineLabel(),
+
+                            TextEntry::make('category.name')
+                                ->label('Danh mục bài viết')
+                                ->inlineLabel(),
+
+                            TextEntry::make('link_url')
+                                ->label('Link tập tin')
+                                ->inlineLabel()->hidden(fn ($record) => !$record->link_url),
+
+                            TextEntry::make('is_home')
+                                ->label('Hiển thị lên trang chủ')
+                                ->inlineLabel()
+                                ->formatStateUsing(fn ($state) => $state ? '✔ Có' : '✘ Không'),
+
+                            TextEntry::make('created_at')
+                                ->label('Ngày tạo')
+                                ->inlineLabel()
+                                ->dateTime('d/m/Y H:i'),
+
+                            TextEntry::make('updated_at')
+                                ->label('Ngày sửa')
+                                ->inlineLabel()
+                                ->dateTime('d/m/Y H:i'),
+                        ]),
+
+                        Grid::make()->schema([
+                            ImageEntry::make('image')
+                                ->label('Hình ảnh đại diện')
+                                ->columnSpanFull()
+                                ->hidden(fn ($record) => !$record->image),
+                        ]),
+
+                        Grid::make()->schema([
+                            TextEntry::make('contents')
+                                ->label('Nội dung tin tức')
+                                ->inlineLabel()
+                                ->columnSpanFull()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 180px; overflow-y: auto; padding: 8px;',
+                                ])
+                                ->prose()
+                                ->html(), // nếu nội dung có thẻ HTML từ CKEditor
+
+                        ]),
+                    ])
+                    ->modalFooterActions(fn($record) => [
+                        Tables\Actions\Action::make('approve')
+                            ->label('Duyệt bài viết')
+                            ->color('success')
+                            ->visible(fn() => $record->isactive != 1)
+                            ->action(function ($record, Tables\Actions\Action $action) {
+                                $record->update([
+                                    'isactive' => 1,
+                                    'approver_by' => auth()->id(),
+                                ]);
+                                $action->close();
+                                $action->dispatch('refreshTable');
+                            })
+                            ->after(function () {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Bài viết đã được duyệt')
+                                    ->success()
+                                    ->send();
+                            }),
+                    ])
+        ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);

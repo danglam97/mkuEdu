@@ -46,6 +46,9 @@ return [
             'delete_any',
             'force_delete',
             'force_delete_any',
+            'refuse',
+            'approve'
+
         ],
 
         'page' => 'page',

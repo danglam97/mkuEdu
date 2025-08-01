@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Post;
+use App\Models\Media;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PostPolicy
+class MediaPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_post');
+        return $user->can('view_any_media');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Post $post): bool
+    public function view(User $user, Media $media): bool
     {
-        return $user->can('view_post');
+        return $user->can('view_media');
     }
 
     /**
@@ -31,23 +31,23 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_post');
+        return $user->can('create_media');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Post $post): bool
+    public function update(User $user, Media $media): bool
     {
-        return $user->can('update_post');
+        return $user->can('update_media');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Post $post): bool
+    public function delete(User $user, Media $media): bool
     {
-        return $user->can('delete_post');
+        return $user->can('delete_media');
     }
 
     /**
@@ -55,15 +55,15 @@ class PostPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_post');
+        return $user->can('delete_any_media');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Post $post): bool
+    public function forceDelete(User $user, Media $media): bool
     {
-        return $user->can('force_delete_post');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,15 +71,15 @@ class PostPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_post');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Post $post): bool
+    public function restore(User $user, Media $media): bool
     {
-        return $user->can('restore_post');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,15 +87,15 @@ class PostPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_post');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Post $post): bool
+    public function replicate(User $user, Media $media): bool
     {
-        return $user->can('replicate_post');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,10 +103,6 @@ class PostPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_post');
-    }
-    public function approve(User $user, Post $post): bool
-    {
-        return $user->can('approve_post');
+        return $user->can('{{ Reorder }}');
     }
 }
