@@ -5,7 +5,9 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\SettingResource\Pages;
 use App\Filament\Admin\Resources\SettingResource\RelationManagers;
 use App\Models\Setting;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\SubNavigationPosition;
@@ -15,8 +17,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SettingResource extends Resource
+class SettingResource extends Resource implements HasShieldPermissions
 {
+    use HasShieldFormComponents;
     protected static ?string $model = Setting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
@@ -26,7 +29,13 @@ class SettingResource extends Resource
     protected static ?string $navigationGroup = 'Cấu hình hệ thống';
 
     protected static ?int $navigationSort = 2;
-
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'update',
+        ];
+    }
     public static function form(Form $form): Form
     {
         return $form
