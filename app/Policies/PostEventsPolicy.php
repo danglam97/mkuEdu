@@ -63,7 +63,7 @@ class PostEventsPolicy
      */
     public function forceDelete(User $user, PostEvents $postEvents): bool
     {
-        return $user->can('force_delete_post::events');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PostEventsPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_post::events');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PostEventsPolicy
      */
     public function restore(User $user, PostEvents $postEvents): bool
     {
-        return $user->can('restore_post::events');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PostEventsPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_post::events');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PostEventsPolicy
      */
     public function replicate(User $user, PostEvents $postEvents): bool
     {
-        return $user->can('replicate_post::events');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PostEventsPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_post::events');
+        return $user->can('{{ Reorder }}');
     }
 }

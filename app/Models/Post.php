@@ -55,4 +55,14 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'approver_by');
     }
+
+    public function approvals()
+    {
+        return $this->hasMany(PostApproval::class);
+    }
+
+    public function latestApproval()
+    {
+        return $this->hasOne(PostApproval::class)->latestOfMany();
+    }
 }

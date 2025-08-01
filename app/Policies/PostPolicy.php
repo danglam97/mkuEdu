@@ -63,7 +63,7 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->can('force_delete_post');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PostPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_post');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -108,5 +108,9 @@ class PostPolicy
     public function approve(User $user, Post $post): bool
     {
         return $user->can('approve_post');
+    }
+    public function refuse(User $user, Post $post): bool
+    {
+        return $user->can('refuse_post');
     }
 }

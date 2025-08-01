@@ -63,7 +63,7 @@ class PostNewsPolicy
      */
     public function forceDelete(User $user, PostNews $postNews): bool
     {
-        return $user->can('force_delete_post::news');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class PostNewsPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_post::news');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class PostNewsPolicy
      */
     public function restore(User $user, PostNews $postNews): bool
     {
-        return $user->can('restore_post::news');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PostNewsPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_post::news');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PostNewsPolicy
      */
     public function replicate(User $user, PostNews $postNews): bool
     {
-        return $user->can('replicate_post::news');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class PostNewsPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_post::news');
+        return $user->can('{{ Reorder }}');
     }
 }
