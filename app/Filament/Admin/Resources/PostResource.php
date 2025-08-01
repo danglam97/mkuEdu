@@ -2,11 +2,13 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\Post\PostStatus;
 use App\Filament\Admin\Resources\PostResource\Pages;
 use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Forms\Components\CKEditor;
 use App\Models\Menus;
 use App\Models\Post;
+use App\Models\PostApproval;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
@@ -143,37 +145,15 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->label('Hiển thị lên trang chủ')
                     ->formatStateUsing(fn($state) => $state ? 'Có' : 'Không')
                     ->sortable(),
-
-                // Người tạo
-                Tables\Columns\TextColumn::make('createdBy.name') // assuming quan hệ với User
-                ->label('Người tạo')
+                Tables\Columns\TextColumn::make('isactive')
+                    ->label('trạng thái')
                     ->sortable()
-                    ->placeholder('—'),
-
-                // Người sửa
-                Tables\Columns\TextColumn::make('updatedBy.name') // assuming quan hệ với User
-                ->label('Người sửa')
-                    ->sortable()
-                    ->placeholder('—'),
-                Tables\Columns\TextColumn::make('approverBy.name') // assuming quan hệ với User
-                ->label('Người duyệt')
-                    ->sortable()
-                    ->placeholder('—'),
-
-                // Thời gian tạo
-                Tables\Columns\TextColumn::make('created_date')
-                    ->label('Ngày tạo')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-
-                // Thời gian sửa
-                Tables\Columns\TextColumn::make('updated_date')
-                    ->label('Ngày sửa')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state) => PostStatus::tryFrom($state)?->getLabel() ?? ''),
             ]) ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('isactive')
+                    ->label('Trạng thái')
+                    ->options(PostStatus::options())
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -204,6 +184,10 @@ class PostResource extends Resource implements HasShieldPermissions
                                 ->label('Hiển thị lên trang chủ')
                                 ->inlineLabel()
                                 ->formatStateUsing(fn ($state) => $state ? '✔ Có' : '✘ Không'),
+                            TextEntry::make('isactive')
+                                ->label('trạng thái')
+                                ->inlineLabel()
+                                ->formatStateUsing(fn ($state) => PostStatus::tryFrom($state)?->getLabel() ?? ''),
 
                             TextEntry::make('created_at')
                                 ->label('Ngày tạo')
@@ -240,7 +224,8 @@ class PostResource extends Resource implements HasShieldPermissions
                 Tables\Actions\EditAction::make()->tooltip('chỉnh sửa')->iconButton(),
                 Tables\Actions\DeleteAction::make()->tooltip('xóa')->iconButton() ->successNotificationTitle('Đã xóa bài viết thành công'),
                 Tables\Actions\Action::make('reviewAndApprove')
-                    ->label('Xem & Duyệt')
+                    ->tooltip('Duyệt bài viết')
+                    ->iconButton()
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn($record) => $record->isactive != 1)
@@ -270,6 +255,10 @@ class PostResource extends Resource implements HasShieldPermissions
                                 ->label('Hiển thị lên trang chủ')
                                 ->inlineLabel()
                                 ->formatStateUsing(fn ($state) => $state ? '✔ Có' : '✘ Không'),
+                                TextEntry::make('isactive')
+                                ->label('trạng thái')
+                                ->inlineLabel()
+                                ->formatStateUsing(fn ($state) => PostStatus::tryFrom($state)?->getLabel() ?? ''),
 
                             TextEntry::make('created_at')
                                 ->label('Ngày tạo')
@@ -321,8 +310,111 @@ class PostResource extends Resource implements HasShieldPermissions
                                     ->success()
                                     ->send();
                             }),
+                    ]),
+                Tables\Actions\Action::make('reviewAndRefuse')
+                    ->tooltip('Từ chối bài viết')
+                    ->iconButton()
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn($record) => $record->isactive != PostStatus::Rejected->value)
+                    ->record(fn($record) => $record)
+                    ->modalHeading('Xem chi tiết bài viết')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Đóng')
+                    ->infolist([
+                        Grid::make(1)->schema([
+                            TextEntry::make('name')
+                                ->label('Tên bài viết')
+                                ->inlineLabel(),
+
+                            TextEntry::make('description')
+                                ->label('Mô tả ngắn')
+                                ->inlineLabel(),
+
+                            TextEntry::make('category.name')
+                                ->label('Danh mục bài viết')
+                                ->inlineLabel(),
+
+                            TextEntry::make('link_url')
+                                ->label('Link tập tin')
+                                ->inlineLabel()->hidden(fn ($record) => !$record->link_url),
+
+                            TextEntry::make('is_home')
+                                ->label('Hiển thị lên trang chủ')
+                                ->inlineLabel()
+                                ->formatStateUsing(fn ($state) => $state ? '✔ Có' : '✘ Không'),
+                                TextEntry::make('isactive')
+                                ->label('trạng thái')
+                                ->inlineLabel()
+                                ->formatStateUsing(fn ($state) => PostStatus::tryFrom($state)?->getLabel() ?? ''),
+
+                            TextEntry::make('created_at')
+                                ->label('Ngày tạo')
+                                ->inlineLabel()
+                                ->dateTime('d/m/Y H:i'),
+
+                            TextEntry::make('updated_at')
+                                ->label('Ngày sửa')
+                                ->inlineLabel()
+                                ->dateTime('d/m/Y H:i'),
+                        ]),
+
+                        Grid::make()->schema([
+                            ImageEntry::make('image')
+                                ->label('Hình ảnh đại diện')
+                                ->columnSpanFull()
+                                ->hidden(fn ($record) => !$record->image),
+                        ]),
+
+                        Grid::make()->schema([
+                            TextEntry::make('contents')
+                                ->label('Nội dung tin tức')
+                                ->inlineLabel()
+                                ->columnSpanFull()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 180px; overflow-y: auto; padding: 8px;',
+                                ])
+                                ->prose()
+                                ->html(), // nếu nội dung có thẻ HTML từ CKEditor
+
+                        ]),
                     ])
-        ])
+                    ->modalFooterActions(fn($record) => [
+                        Tables\Actions\Action::make('refuse')
+                            ->label('Từ chối bài viết')
+                            ->color('danger')
+                            ->visible(fn() => $record->isactive != PostStatus::Rejected->value)
+                            ->form([
+                                Forms\Components\Textarea::make('note')
+                                    ->label('Lý do từ chối')
+                                    ->required()
+                                    ->maxLength(500),
+                            ])
+                            ->action(function (array $data, $record, Tables\Actions\Action $action) {
+                                $record->update([
+                                    'isactive' => PostStatus::Rejected->value,
+                                    'approver_by' => auth()->id(),
+                                ]);
+
+                                // 👉 Lưu lý do vào bảng khác nếu có
+                                PostApproval::create([
+                                    'post_id' => $record->id,
+                                    'reason' => $data['note'], // lấy từ textarea
+                                    'user_id' => auth()->id(),
+                                ]);
+
+                                $action->dispatch('refreshTable');
+                                $action->dispatch('close-modal');
+                            })
+                            ->after(function () {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Bài viết đã bị từ chối')
+                                    ->warning()
+                                    ->send();
+                            }),
+                    ])
+
+            ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
