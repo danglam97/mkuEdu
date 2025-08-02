@@ -37,7 +37,8 @@ return new class extends Migration
             $table->unsignedBigInteger('approver_by')->nullable()->comment('Người duyệt bài');
 
             $table->tinyInteger('isdelete')->default(0)->comment('Xác định xóa (1: Xác định xóa)');
-            $table->tinyInteger('isactive')->default(1)->comment('Trạng thái hiển thị (0: chờ duyệt, 1: đăng bài, 2: chờ duyệt (đã sửa) 3: từ chối');
+            $table->tinyInteger('isactive')->default(0)->comment('trạng thái hoạt động (0: không hoạt đông, 1: Hoạt động)');
+            $table->tinyInteger('status')->default(0)->comment('Trạng thái (0: chờ duyệt, 1: đăng bài, 2: chờ duyệt (đã sửa) 3: từ chối');
             $table->timestamps();
         });
     }

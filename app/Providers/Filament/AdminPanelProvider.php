@@ -33,7 +33,8 @@ class AdminPanelProvider extends PanelProvider
                 'gray' => Color::Sky
             ])
             ->font('Inter')
-            ->brandName('Base Filament Admin')
+            ->brandName('Trường Đại Học Cửu Long')
+            ->favicon('https://mku.edu.vn/dist/2020/08/logo-DHCL.jpg')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
