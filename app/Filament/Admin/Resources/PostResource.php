@@ -190,55 +190,47 @@ class PostResource extends Resource implements HasShieldPermissions
 //                    )
                     ->iconButton(),
                 Tables\Actions\DeleteAction::make()->tooltip('xóa')->iconButton() ->successNotificationTitle('Đã xóa bài viết thành công'),
-                Tables\Actions\Action::make('reviewAndApprove')
+                Tables\Actions\Action::make('approve')
                     ->tooltip('Duyệt bài viết')
                     ->iconButton()
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn($record) => in_array($record->status, [
-                        PostStatus::Pending->value,
-                        PostStatus::Waiting->value,
-                    ]))
-                    ->record(fn($record) => $record)
+                    ->authorize(fn($record) => auth()->user()->can('approve', $record)) // ✅ Check Policy + trạng thái
                     ->modalHeading('Xem chi tiết bài viết')
-                    ->modalSubmitAction(false)
+                    ->modalSubmitAction(false) // Không có nút submit mặc định
                     ->modalCancelActionLabel('Đóng')
                     ->infolist([
                         ViewEntry::make('record')
                             ->label(false)
                             ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts.partials.contents'),
+                            ->view('filament.admin.posts_events.partials.contents'),
                     ])
                     ->modalFooterActions(fn($record) => [
-                        Tables\Actions\Action::make('approve')
-                            ->label('Duyệt bài viết')
+                        Tables\Actions\Action::make('confirmApprove')
+                            ->label('Xác nhận duyệt')
                             ->color('success')
-                            ->visible(fn() => $record->status != 1)
+                            ->authorize(fn($record) => auth()->user()->can('approve', $record)) // Check lại trong nút confirm
                             ->action(function ($record, Tables\Actions\Action $action) {
                                 $record->update([
-                                    'status' => PostStatus::Approved->value, // trạng thái bài viết
+                                    'status' => PostStatus::Approved->value,
                                     'approver_by' => auth()->id(),
-                                    'isactive' => PostIsActive::Approved->value, // Trạng thái hiển thị
+                                    'isactive' => PostIsActive::Approved->value,
                                 ]);
                                 $action->close();
                                 $action->dispatch('refreshTable');
-                            })
-                            ->after(function () {
                                 \Filament\Notifications\Notification::make()
                                     ->title('Bài viết đã được duyệt')
                                     ->success()
                                     ->send();
                             }),
                     ]),
-                Tables\Actions\Action::make('reviewAndRefuse')
+
+                Tables\Actions\Action::make('refuse')
                     ->tooltip('Từ chối bài viết')
                     ->iconButton()
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn($record) => in_array($record->status, [
-                        PostStatus::Pending->value,
-                        PostStatus::Waiting->value,
-                    ]))
+                    ->authorize(fn($record) => auth()->user()->can('refuse', $record))
                     ->record(fn($record) => $record)
                     ->modalHeading('Xem chi tiết bài viết')
                     ->modalSubmitAction(false)
@@ -247,13 +239,13 @@ class PostResource extends Resource implements HasShieldPermissions
                         ViewEntry::make('record')
                             ->label(false)
                             ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts.partials.contents'),
+                            ->view('filament.admin.posts_events.partials.contents'),
                     ])
                     ->modalFooterActions(fn($record) => [
-                        Tables\Actions\Action::make('refuse')
+                        Tables\Actions\Action::make('confirmRefuse')
                             ->label('Từ chối bài viết')
                             ->color('danger')
-                            ->visible(fn() => $record->status != PostStatus::Rejected->value)
+                            ->authorize(fn($record) => auth()->user()->can('refuse', $record))
                             ->action(function (array $data, $record, Tables\Actions\Action $action) {
                                 $record->update([
                                     'status' => PostStatus::Rejected->value,

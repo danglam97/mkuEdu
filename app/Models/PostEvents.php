@@ -27,8 +27,14 @@ class PostEvents extends Model
         'approver_by',
         'isdelete',
         'isactive',
+        'status',
+        'start_datetime',
+        'end_datetime',
     ];
-
+    protected $casts = [
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime',
+    ];
     public static function booted()
     {
         static::saving(function ($post) {

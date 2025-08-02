@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Post\PostStatus;
 use App\Models\User;
 use App\Models\PostEvents;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -105,4 +106,22 @@ class PostEventsPolicy
     {
         return $user->can('{{ Reorder }}');
     }
+    public function approve(User $user, PostEvents $postEvents): bool
+    {
+        return $user->can('approve_post::events')
+            && in_array($postEvents->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
+    }
+
+    public function refuse(User $user, PostEvents $postEvents): bool
+    {
+        return $user->can('refuse_post::events')
+            && in_array($postEvents->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
+    }
+
 }

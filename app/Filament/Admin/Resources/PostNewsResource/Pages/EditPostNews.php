@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\PostNewsResource\Pages;
 
+use App\Enums\Post\PostIsActive;
+use App\Enums\Post\PostStatus;
 use App\Filament\Admin\Resources\PostNewsResource;
 use Carbon\Carbon;
 use Filament\Actions;
@@ -22,7 +24,14 @@ class EditPostNews extends EditRecord
     {
         $data['updated_date'] = Carbon::now();  // hoặc now()
         $data['updated_by'] = Auth::id();       // hoặc auth()->id()
-        $data['isactive'] = 0;
+        $data['isactive'] = PostIsActive::Pending->value;
+
+        if ($this->record->status == PostStatus::Rejected->value) {
+            $data['status'] = PostStatus::Waiting->value;
+        }
+        if ($this->record->status == PostStatus::Approved->value) {
+            $data['status'] = PostStatus::Pending->value;
+        }
         return $data;
     }
 }

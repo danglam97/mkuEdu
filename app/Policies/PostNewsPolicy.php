@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
+use App\Enums\Post\PostStatus;
+use App\Models\Postnews;
 use App\Models\User;
-use App\Models\PostNews;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PostNewsPolicy
@@ -104,5 +105,22 @@ class PostNewsPolicy
     public function reorder(User $user): bool
     {
         return $user->can('{{ Reorder }}');
+    }
+    public function approve(User $user, PostNews $postNews): bool
+    {
+        return $user->can('approve_post::news')
+            && in_array($postNews->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
+    }
+
+    public function refuse(User $user, PostNews $postNews): bool
+    {
+        return $user->can('refuse_post::news')
+            && in_array($postNews->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
     }
 }
