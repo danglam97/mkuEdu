@@ -27,6 +27,7 @@ class Post extends Model
         'approver_by',
         'isdelete',
         'isactive',
+        'status',
     ];
 
     public static function booted()

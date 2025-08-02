@@ -79,7 +79,7 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return $user->can('restore_post');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class PostPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_post');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class PostPolicy
      */
     public function replicate(User $user, Post $post): bool
     {
-        return $user->can('replicate_post');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,14 +103,6 @@ class PostPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_post');
-    }
-    public function approve(User $user, Post $post): bool
-    {
-        return $user->can('approve_post');
-    }
-    public function refuse(User $user, Post $post): bool
-    {
-        return $user->can('refuse_post');
+        return $user->can('{{ Reorder }}');
     }
 }
