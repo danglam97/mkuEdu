@@ -97,4 +97,5 @@ return [
         'enabled' => true,
     ],
 
+    'localization' => true,
 ];
