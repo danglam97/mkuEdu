@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\web;
 
 use App\Services\Web\Media\MediaService;
+use App\Services\Web\Album\AlbumService;
 use App\Services\Web\Menu\MenuService;
 use App\Http\Controllers\Controller;
 use App\Services\Web\Post\PostService;
@@ -12,12 +13,18 @@ class HomeController extends BaseWebController
 {
 
     protected $postService;
-    protected $mediaService;
+    protected $mediaAlubumService;
+    protected $mediaVideoService;
 
-    public function __construct( PostService $postService)
+    public function __construct(PostService  $postService,
+                                AlbumService $albumService,
+                                MediaService $mediaVideoService
+    )
     {
         parent::__construct(app(\App\Services\Web\Menu\MenuService::class));
         $this->postService = $postService;
+        $this->albumService = $albumService;
+        $this->mediaVideoService = $mediaVideoService;
     }
 
     public function index()
@@ -26,12 +33,16 @@ class HomeController extends BaseWebController
         $menuScienceTechnology = app(\App\Services\Web\Menu\MenuService::class)->getMenuScienceTechnology();
         $postNews = $this->postService->getLatestHomePostNews(8);
         $postEvents = $this->postService->getLatestHomePostEvents(4);
+        $albumMedias = $this->albumService->getAlbumImage();
+        $mediaVideo = $this->mediaVideoService->getMediaVideo();
         return view('web.home', [
 
             'menuTrain' => $menuTrain,
             'menuScienceTechnology' => $menuScienceTechnology,
             'postNews' => $postNews,
             'postEvents' => $postEvents,
+            'albumMedias' => $albumMedias,
+            'mediaVideo' => $mediaVideo,
         ]);
     }
 

@@ -21,6 +21,7 @@ class BootstrapServiceProvider extends ServiceProvider
     {
         $this->app->bind(\App\Services\Web\Menu\MenuServiceInterface::class, \App\Services\Web\Menu\MenuService::class);
         $this->app->bind(\App\Services\Web\Post\PostServiceInterface::class, \App\Services\Web\Post\PostService::class);
+        $this->app->bind(\App\Services\Web\Album\AlbumServiceInterface::class, \App\Services\Web\Album\AlbumService::class);
         //:end-bindings:
     }
 }
