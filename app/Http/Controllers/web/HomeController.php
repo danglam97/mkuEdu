@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\web;
 
+use App\Services\Web\Media\MediaService;
 use App\Services\Web\Menu\MenuService;
 use App\Http\Controllers\Controller;
 use App\Services\Web\Post\PostService;
@@ -11,6 +12,7 @@ class HomeController extends BaseWebController
 {
 
     protected $postService;
+    protected $mediaService;
 
     public function __construct( PostService $postService)
     {
