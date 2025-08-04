@@ -3,10 +3,18 @@
 use App\Models\Patient;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
+use App\Http\Controllers\web\HomeController;
+//web
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/{slug}', 'menuPost')->name('menu.posts');
 });
+
+
+
+
+
+/// admin
 
 Route::get('/admin/patients/{patient}/undo', function (Patient $patient) {
     $originalData = Cache::get("patient_undo_{$patient->id}");
