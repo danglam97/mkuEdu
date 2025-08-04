@@ -1,6 +1,6 @@
 @extends('web.layout.manin')
 @section('content')
-    <section id="tin-tuc ">
+    <section id="tin-tuc">
         <div class="container">
             <div class="section-header text-center row">
                 <h1 class="text-wrapper-3 text-danger text-capitalize fw-bolder">
@@ -10,107 +10,58 @@
                     Thông tin mới nhất và kiến thức hữu ích từ Trường Đại Học Cửu Long
                 </p>
             </div>
-            <div class="tin-tc row">
-                <div class="col-12">
-                    <div class="position-relative item-head">
-                        <img
-                            src="/style/images/banner-tin-tuc.png"
-                            class="img-fluid w-100"
-                            alt=""
-                        />
-                        <div class="head-title position-absolute py-3">
-                            <h3>Tin tức nổi bật</h3>
-                            <p>
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </p>
+
+            {{-- Tin nổi bật (bài đầu tiên) --}}
+            @if($postNews->isNotEmpty())
+                @php $firstPostNew = $postNews->first(); @endphp
+                <div class="tin-tc row">
+                    <div class="col-12">
+                        <div class="position-relative item-head">
+                            <img src="{{ $firstPostNew->thumbnail ? asset($firstPostNew->thumbnail) : asset('/style/images/banner-tin-tuc.png') }}"
+                                 class="img-fluid w-100"
+                                 alt="{{ $firstPostNew->name }}">
+                            <div class="head-title position-absolute py-3">
+                                <h3>{{ $firstPostNew->name }}</h3>
+                                <p>
+                                    {{ Str::limit(strip_tags($firstPostNew->description ?? ''), 100) }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+
+            {{-- Danh sách các tin khác --}}
             <div class="row my-0 my-md-3">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <h5 class="text-ellipsis-3">
-                                Chất lượng vượt trội - Gắn liền thực tiễn - Vươn tầm quốc tế
-                            </h5>
-                            <p class="text-end align-self-end">
-                                11/07/2025 | <a href="#">Xem tiếp</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <h5 class="text-ellipsis-3">
-                                Trường Đại học Cửu Long triển khai Nghị quyết 57-NQ/TW
-                            </h5>
-                            <p class="text-end align-self-end">
-                                11/07/2025 | <a href="#">Xem tiếp</a>
-                            </p>
+                @foreach($postNews->skip(1) as $postNew)
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
+                        <div class="item">
+                            <div class="img">
+                                <img src="{{ $postNew->thumbnail ? asset($postNew->thumbnail) : asset('/style/images/no-image.png') }}"
+                                     alt="{{ $postNew->name }}"
+                                     class="img-fluid w-100">
+                            </div>
+                            <div class="title p-2">
+                                <h5 class="text-ellipsis-3">
+                                    {{ $postNew->name }}
+                                </h5>
+                                <p class="text-end align-self-end">
+                                    {{ $postNew->created_date->format('d/m/Y') }} |
+                                    <a href="#">Xem tiếp</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <h5 class="text-ellipsis-3">
-                                Trường ĐH Cửu Long hợp tác đào tạo bác sĩ dành cho sinh viên
-                                Nhật Bản
-                            </h5>
-                            <p class="d-flex justify-content-end">
-                                11/07/2025 | <a href="#">Xem tiếp</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <h5 class="text-ellipsis-3">
-                                Hoạt động giáo dục quốc phòng và an ninh cho sinh viên khóa
-                                25 Trường Đại học Cửu Long
-                            </h5>
-                            <p class="text-end align-self-end">
-                                11/07/2025 | <a href="#">Xem tiếp</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
+
+            {{-- Nút xem thêm --}}
             <div class="text-center w-100 section-footer">
                 <a href="#" class="btn-danger">Xem thêm</a>
             </div>
+            @endif
         </div>
+
     </section>
     <section id="tuyen-sinh">
         <div class="container">
@@ -149,112 +100,38 @@
                 </p>
             </div>
         </div>
+        @if($postEvents->isNotEmpty())
         <div class="container">
             <div class="row">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item position-relative">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2 h-40">
-                            <h5 class="text-ellipsis-3">
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </h5>
-                            <div
-                                class="item-bottom d-flex align-items-end flex-column bd-highlight mb-3"
-                            >
-                                <p class="mt-auto p-2 bd-highlight">
-                                    11/07/2025 | <a href="#">Xem tiếp</a>
-                                </p>
+
+                @foreach($postEvents as $event)
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
+                        <div class="item position-relative">
+                            <div class="img h-60">
+                                <img
+                                    src="{{ $event->image ? asset($event->image) : asset('/style/images/default.png') }}"
+                                    alt="{{ $event->name }}"
+                                    class="img-fluid w-100"
+                                />
+                            </div>
+                            <div class="title p-2 h-40">
+                                <h5 class="text-ellipsis-3">
+                                    {{ $event->name }}
+                                </h5>
+                                <div class="item-bottom d-flex align-items-end flex-column bd-highlight mb-3">
+                                    <p class="mt-auto p-2 bd-highlight">
+                                        {{ $event->created_at->format('d/m/Y') }} |
+                                        <a href="#">Xem tiếp</a>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="img-date position-absolute">
+                                <img src="{{ asset('/style/images/date.png') }}" alt="" />
                             </div>
                         </div>
-                        <div class="img-date position-absolute">
-                            <img src="/style/images/date.png" alt="" class="" />
-                        </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item position-relative">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2 h-40">
-                            <h5 class="text-ellipsis-3">
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </h5>
-                            <div
-                                class="item-bottom d-flex align-items-end flex-column bd-highlight mb-3"
-                            >
-                                <p class="mt-auto p-2 bd-highlight">
-                                    11/07/2025 | <a href="#">Xem tiếp</a>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="img-date position-absolute">
-                            <img src="/style/images/date.png" alt="" class="" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item position-relative">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2 h-40">
-                            <h5 class="text-ellipsis-3">
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </h5>
-                            <div
-                                class="item-bottom d-flex align-items-end flex-column bd-highlight mb-3"
-                            >
-                                <p class="mt-auto p-2 bd-highlight">
-                                    11/07/2025 | <a href="#">Xem tiếp</a>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="img-date position-absolute">
-                            <img src="/style/images/date.png" alt="" class="" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item position-relative">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/7-Dai-bieu-chup-anh-luu-niem.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2 h-40">
-                            <h5 class="text-ellipsis-3">
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </h5>
-                            <div
-                                class="item-bottom d-flex align-items-end flex-column bd-highlight mb-3"
-                            >
-                                <p class="mt-auto p-2 bd-highlight">
-                                    11/07/2025 | <a href="#">Xem tiếp</a>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="img-date position-absolute">
-                            <img src="/style/images/date.png" alt="" class="" />
-                        </div>
-                    </div>
-                </div>
+                @endforeach
+
             </div>
             <div class="section-footer">
                 <div class="text-center w-100">
@@ -262,6 +139,8 @@
                 </div>
             </div>
         </div>
+        @endif
+
 
         <div class="video w-100">
             <img
@@ -272,13 +151,15 @@
     </section>
 
     <section id="khoa-hoc-cong-nghe">
+        @if($menuScienceTechnology)
         <div class="container">
             <div class="section-header text-center row">
-                <h1>{{$menuScienceTechnology->name}}</h1>
+                <h1>{{$menuScienceTechnology ? $menuScienceTechnology->name : ""}}</h1>
                 <p class="fw-bold">Nghiên cứu vì lợi ích cộng đồng</p>
             </div>
 
             <div class="row">
+
                 @foreach($menuScienceTechnology->children as $menuScienceTechnologyChildren)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
                     <div class="item-khoa-hoc">
@@ -298,10 +179,12 @@
                 @endforeach
 
             </div>
+            @endif
         </div>
     </section>
     <section id="dao-tao">
         <div class="container">
+            @if($menuTrain)
             <div class="section-header text-center row">
                 <h1 class="text-danger">{{$menuTrain->name}}</h1>
                 <p class="fw-bold">
@@ -324,6 +207,7 @@
                 </div>
                 @endforeach
             </div>
+            @endif
             <div class="row">
                 <h3 class="text-center text-danger my-4">
                     Trường/Khoa/Viện đào tạo
