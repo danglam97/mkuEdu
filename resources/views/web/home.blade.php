@@ -17,7 +17,7 @@
                 <div class="tin-tc row">
                     <div class="col-12">
                         <div class="position-relative item-head">
-                            <img src="{{ $firstPostNew->thumbnail ? asset($firstPostNew->thumbnail) : asset('/style/images/banner-tin-tuc.png') }}"
+                            <img src="{{ $firstPostNew->thumbnail ? get_image_url($firstPostNew->thumbnail) : asset('/style/images/banner-tin-tuc.png') }}"
                                  class="img-fluid w-100"
                                  alt="{{ $firstPostNew->name }}">
                             <div class="head-title position-absolute py-3">
@@ -37,7 +37,7 @@
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
                         <div class="item">
                             <div class="img">
-                                <img src="{{ $postNew->thumbnail ? asset($postNew->thumbnail) : asset('/style/images/no-image.png') }}"
+                                <img src="{{ $postNew->thumbnail ? get_image_url($postNew->thumbnail) : asset('/style/images/no-image.png') }}"
                                      alt="{{ $postNew->name }}"
                                      class="img-fluid w-100">
                             </div>
@@ -109,7 +109,7 @@
                         <div class="item position-relative">
                             <div class="img h-60">
                                 <img
-                                    src="{{ $event->image ? asset($event->image) : asset('/style/images/default.png') }}"
+                                    src="{{ $event->image ? get_image_url($event->image) : asset('/style/images/default.png') }}"
                                     alt="{{ $event->name }}"
                                     class="img-fluid w-100"
                                 />
@@ -140,13 +140,17 @@
             </div>
         </div>
         @endif
-
-
         <div class="video w-100">
-            <img
-                class="video img-fluid p-0 w-100"
-                src="https://c.animaapp.com/mdrent4ttKlpku/img/video.png"
-            />
+            @if($mediaVideo)
+                <video controls autoplay muted loop playsinline class="video img-fluid p-0 w-100">
+                    <source src="{{ get_video_url($mediaVideo->url) }}" type="video/mp4">
+                </video>
+            @else
+                <img
+                    class="video img-fluid p-0 w-100"
+                    src="https://c.animaapp.com/mdrent4ttKlpku/img/video.png"
+                />
+            @endif
         </div>
     </section>
 
@@ -166,7 +170,7 @@
                         <div class="img h-60">
 
                                 <img
-                                    src="{{asset($menuTrainchildren->icon ?? '/style/images/kh-cn-1.png')}}"
+                                    src="{{get_image_url($menuTrainchildren->icon)}}"
                                     alt=""
                                     class="img-fluid w-100"
                                 />
@@ -197,7 +201,7 @@
                     <div class="item-dao-tao">
                         <div class="img h-60">
                                 <img
-                                    src="{{asset($menuTrainchildren->icon ?? '/style/images/dao-tao-1.png')}}"
+                                    src="{{get_image_url($menuTrainchildren->icon)}}"
                                     alt=""
                                     class="img-fluid w-100"
                                 />
@@ -532,41 +536,22 @@
                         </button>
 
                         <div class="slider w-100">
-                            <div class="album-container">
-                                <div class="left">
-                                    <img src="/style/images/hdsv1.png" alt="Hình lớn bên trái" />
+                            @if($albumMedias->isNotEmpty() )
+                            @foreach($albumMedias as $album)
+                                <div class="album-container">
+                                    <div class="left">
+                                        @if($album->mainImage)
+                                            <img src="{{  get_image_url($album->mainImage->image) }}" alt="{{ $album->title }}">
+                                        @endif
+                                    </div>
+                                    <div class="right">
+                                        @foreach($album->subImages as $image)
+                                            <img src="{{ get_image_url($image->image) }}" alt="Ảnh phụ">
+                                        @endforeach
+                                    </div>
                                 </div>
-                                <div class="right">
-                                    <img src="/style/images/hdsc2.png" alt="Ảnh nhỏ 1" />
-                                    <img src="/style/images/hdsv3.png" alt="Ảnh nhỏ 2" />
-                                    <img src="/style/images/hdsv4.png" alt="Ảnh nhỏ 3" />
-                                    <img src="/style/images/hdsv5.png" alt="Ảnh nhỏ 4" />
-                                </div>
-                            </div>
-                            <div class="album-container">
-                                <div class="left">
-                                    <img src="/style/images/hdsv1.png" alt="Hình lớn bên trái" />
-                                </div>
-
-                                <div class="right">
-                                    <img src="/style/images/hdsc2.png" alt="Ảnh nhỏ 1" />
-                                    <img src="/style/images/hdsv3.png" alt="Ảnh nhỏ 2" />
-                                    <img src="/style/images/hdsv4.png" alt="Ảnh nhỏ 3" />
-                                    <img src="/style/images/hdsv5.png" alt="Ảnh nhỏ 4" />
-                                </div>
-                            </div>
-                            <div class="album-container">
-                                <div class="left">
-                                    <img src="/style/images/hdsv1.png" alt="Hình lớn bên trái" />
-                                </div>
-
-                                <div class="right">
-                                    <img src="/style/images/hdsc2.png" alt="Ảnh nhỏ 1" />
-                                    <img src="/style/images/hdsv3.png" alt="Ảnh nhỏ 2" />
-                                    <img src="/style/images/hdsv4.png" alt="Ảnh nhỏ 3" />
-                                    <img src="/style/images/hdsv5.png" alt="Ảnh nhỏ 4" />
-                                </div>
-                            </div>
+                            @endforeach
+                            @endif
                         </div>
 
                         <button class="btn-next ms-2">

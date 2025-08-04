@@ -21,7 +21,7 @@ class MediaResource extends Resource implements HasShieldPermissions
     use HasShieldFormComponents;
     protected static ?string $model = Media::class;
 
-    protected static ?string $modelLabel = 'Media';
+    protected static ?string $modelLabel = 'Video';
     protected static ?string $navigationIcon = 'heroicon-s-video-camera';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-video-camera';
@@ -51,6 +51,8 @@ class MediaResource extends Resource implements HasShieldPermissions
                             ->required(),
 
                         Forms\Components\Select::make('type')
+                            ->hidden()
+                            ->default('video')
                             ->label('Loại media')
                             ->options([
                                 'image' => 'Ảnh',
@@ -61,6 +63,9 @@ class MediaResource extends Resource implements HasShieldPermissions
 
                         Forms\Components\Select::make('source')
                             ->label('Nguồn video')
+                            ->default('file')
+                            ->hidden()
+                            ->required()
                             ->options([
                                 'file' => 'Tải lên file (.mp4)',
                                 'link' => 'Link YouTube / Vimeo',
@@ -70,7 +75,7 @@ class MediaResource extends Resource implements HasShieldPermissions
                             ->reactive(),
 
                         Forms\Components\FileUpload::make('url')
-                            ->label('Tải lên ảnh hoặc video')
+                            ->label('Tải video')
                             ->directory('media')
                             ->visible(fn ($get) =>
                                 ($get('type') === 'image') || ($get('type') === 'video' && $get('source') === 'file')
@@ -86,27 +91,10 @@ class MediaResource extends Resource implements HasShieldPermissions
                             ->required(fn ($get) => $get('type') === 'video' && $get('source') === 'link'),
 
                         Forms\Components\FileUpload::make('thumbnail')
-                            ->label('Ảnh đại diện (thumbnail)')
+                            ->label('Ảnh đại diện')
                             ->directory('media/thumbnails')
                             ->image()
-                            ->imageEditor()
-                            ->visible(fn ($get) => $get('type') === 'video'),
-
-                        Forms\Components\Select::make('page')
-                            ->label('Trang hiển thị')
-                            ->options([
-                                'home' => 'Trang chủ',
-                                'about' => 'Giới thiệu',
-                                'contact' => 'Liên hệ',
-                                'blog' => 'Blog',
-                            ])
-                            ->searchable(),
-
-                        Forms\Components\TextInput::make('position')
-                            ->placeholder('nhập vị trí')
-                            ->label('Vị trí (ví dụ: top_banner, footer)')
-                            ->nullable(),
-
+                            ->imageEditor(),
                         Forms\Components\Textarea::make('description')
                             ->label('Mô tả')
                             ->rows(3),
@@ -120,16 +108,9 @@ class MediaResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')->label('Tiêu đề')->searchable(),
-                Tables\Columns\TextColumn::make('type')->label('Loại'),
-                Tables\Columns\TextColumn::make('page')->label('Trang'),
-                Tables\Columns\ImageColumn::make('preview')
-                    ->label('Hiển thị')
-                    ->getStateUsing(function ($record) {
-                        return $record->type === 'video' ? $record->thumbnail : $record->url;
-                    })
-                    ->circular() // tùy chọn: bo tròn ảnh
-                    ->height(60)
-                    ->width(100),
+                Tables\Columns\ImageColumn::make('thumbnails')
+                    ->label('Hình ảnh')
+                    ->disk('public'),
             ])
             ->filters([
                 //

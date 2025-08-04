@@ -7,9 +7,10 @@ use App\Services\Web\Media\MediaServiceInterface;
 
 class MediaService implements MediaServiceInterface
 {
-    public function getMedia($limit)
+    public function getMediaVideo()
     {
-        return Media::latest()
-            ->take($limit)->get();
+        return Media::where('type', 'image')
+            ->latest()
+            ->first();
     }
 }
