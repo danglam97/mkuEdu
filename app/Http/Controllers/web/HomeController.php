@@ -4,26 +4,32 @@ namespace App\Http\Controllers\web;
 
 use App\Services\Web\Menu\MenuService;
 use App\Http\Controllers\Controller;
+use App\Services\Web\Post\PostService;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class HomeController extends BaseWebController
 {
-    protected $menuService;
 
-    public function __construct(MenuService $menuService)
+    protected $postService;
+
+    public function __construct( PostService $postService)
     {
-        $this->menuService = $menuService;
+        parent::__construct(app(\App\Services\Web\Menu\MenuService::class));
+        $this->postService = $postService;
     }
 
     public function index()
     {
-        $menus = $this->menuService->getMenuTree();
-        $menuTrain = $this->menuService->getMenuTrain();
-        $menuScienceTechnology = $this->menuService->getMenuScienceTechnology();
+        $menuTrain = app(\App\Services\Web\Menu\MenuService::class)->getMenuTrain();
+        $menuScienceTechnology = app(\App\Services\Web\Menu\MenuService::class)->getMenuScienceTechnology();
+        $postNews = $this->postService->getLatestHomePostNews(8);
+        $postEvents = $this->postService->getLatestHomePostEvents(4);
         return view('web.home', [
-            'menus' => $menus,
+
             'menuTrain' => $menuTrain,
             'menuScienceTechnology' => $menuScienceTechnology,
+            'postNews' => $postNews,
+            'postEvents' => $postEvents,
         ]);
     }
 
