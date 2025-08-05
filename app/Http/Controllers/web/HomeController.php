@@ -31,6 +31,7 @@ class HomeController extends BaseWebController
     {
         $menuTrain = app(\App\Services\Web\Menu\MenuService::class)->getMenuTrain();
         $menuScienceTechnology = app(\App\Services\Web\Menu\MenuService::class)->getMenuScienceTechnology();
+        $menuCooperate = app(\App\Services\Web\Menu\MenuService::class)->getMenuCooperate();
         $postNews = $this->postService->getLatestHomePostNews(8);
         $postEvents = $this->postService->getLatestHomePostEvents(4);
         $albumMedias = $this->albumService->getAlbumImage();
@@ -43,6 +44,7 @@ class HomeController extends BaseWebController
             'postEvents' => $postEvents,
             'albumMedias' => $albumMedias,
             'mediaVideo' => $mediaVideo,
+            'menuCooperate' => $menuCooperate,
         ]);
     }
 

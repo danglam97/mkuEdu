@@ -50,4 +50,14 @@ class MenuService implements MenuServiceInterface
             ->first();
         return $menuScienceTechnology;
     }
+    public function getMenuCooperate()
+    {
+        $menuScienceTechnology = Menus::where('is_active', MenuIsActive::Approved->value)
+            ->where('slug', 'hop-tac-quoc-te')
+            ->with(['children' => function ($query) {
+                $query->where('is_active', MenuIsActive::Approved->value);
+            }])
+            ->first();
+        return $menuScienceTechnology;
+    }
 }
