@@ -170,7 +170,7 @@
                         <div class="img h-60">
 
                                 <img
-                                    src="{{get_image_url($menuTrainchildren->icon)}}"
+                                    src="{{get_image_url($menuScienceTechnologyChildren->icon)}}"
                                     alt=""
                                     class="img-fluid w-100"
                                 />
@@ -356,88 +356,39 @@
         </div>
     </section>
     <section id="hop-tac-qt">
+
         <div class="container">
             <div class="section-header text-center">
-                <h1>Hợp tác quốc tế</h1>
+                <h1><h1>{{$menuCooperate ? $menuCooperate->name : ""}}</h1></h1>
                 <p class="fw-bold">
                     Kết nối cộng đồng - Lan tỏa tri thức - Hành động bền vững
                 </p>
             </div>
             <div class="row">
+                @if($menuCooperate->children)
+                @foreach($menuCooperate->children as $cooperate)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
                     <div class="item">
                         <div class="img h-60">
                             <img
-                                src="/style/images/ht-qt-1.png"
+                                src="{{get_image_url($cooperate->icon)}}"
                                 alt=""
                                 class="img-fluid w-100"
                             />
                         </div>
                         <div class="title p-2">
                             <p>
-                                Tiếp và làm việc với Nghiệp đoàn Chubu Wellfair Support
-                                Cooperative Association,<br />Nhật Bản
+                                {{$cooperate->name}}
                             </p>
                             <a class="d-flex justify-content-end" href="#">Xem tiếp</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/ht-qt-2.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <p>
-                                Tiếp và làm việc với Nghiệp đoàn Chubu Wellfair Support
-                                Cooperative Association,<br />Nhật Bản
-                            </p>
-                            <a class="d-flex justify-content-end" href="#">Xem tiếp</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/ht-qt-3.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <p>
-                                Tiếp và làm việc với Nghiệp đoàn Chubu Wellfair Support
-                                Cooperative Association,<br />Nhật Bản
-                            </p>
-                            <a class="d-flex justify-content-end" href="#">Xem tiếp</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0">
-                    <div class="item">
-                        <div class="img h-60">
-                            <img
-                                src="/style/images/ht-qt-4.png"
-                                alt=""
-                                class="img-fluid w-100"
-                            />
-                        </div>
-                        <div class="title p-2">
-                            <p>
-                                Tiếp và làm việc với Nghiệp đoàn Chubu Wellfair Support
-                                Cooperative Association,<br />Nhật Bản
-                            </p>
-                            <a class="d-flex justify-content-end" href="#">Xem tiếp</a>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
+                @endif
             </div>
         </div>
+
     </section>
     <section id="phuong-cham">
         <div class="container">
