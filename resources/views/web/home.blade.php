@@ -242,14 +242,9 @@
             <hr />
             <div class="row">
                 <p class="text-center khoa-dao-tao">
-                    Khoa Khoa học Xã hội &amp; Nhân văn | Khoa Luật | Khoa Công nghệ
-                    thông tin – Truyền thông | Khoa Nông nghiệp – Thủy sản | Khoa Dược
-                    học | Khoa Kỹ thuật Công nghệ | Viện Công nghệ sinh học – Thực
-                    phẩm | Khoa Mỹ thuật Công nghiệp | Viện Hợp tác &amp; Đào tạo Quốc
-                    tế | Trung tâm Công nghệ thông tin – Điện tử | Viện Đào tạo thường
-                    xuyên | Khoa Cơ bản | Khoa Sau đại học | Khoa Ngoại ngữ | Khoa Tài
-                    chính – Kế toán | Khoa Quản trị Kinh doanh | Khoa Khoa học Sức
-                    Khỏe
+                    @if($majors->isNotEmpty())
+                        {{ $majors->pluck('name')->implode(' | ') }}
+                    @endif
                 </p>
             </div>
             <div class="row">
@@ -260,90 +255,24 @@
                     </button>
 
                     <div class="slider-dao-tao row">
+                        @if($majors->isNotEmpty())
+                        @foreach($majors as $major)
                         <div
                             class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
                         >
                             <div class="item-slide-dao-tao border-0 px-2">
                                 <div class="img h-60">
                                     <img
-                                        src="/style/images/slide-dao-tao-1.png"
+                                        src="{{get_image_url($major->icon)}}"
                                         alt=""
                                         class="img-fluid w-100"
                                     />
                                 </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
+                                <p class="text-center fw-bold">{{$major->name}}</p>
                             </div>
                         </div>
-                        <div
-                            class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
-                        >
-                            <div class="item-slide-dao-tao border-0 px-2">
-                                <div class="img h-60">
-                                    <img
-                                        src="/style/images/slide-dao-tao-2.png"
-                                        alt=""
-                                        class="img-fluid w-100"
-                                    />
-                                </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
-                            </div>
-                        </div>
-                        <div
-                            class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
-                        >
-                            <div class="item-slide-dao-tao border-0 px-2">
-                                <div class="img h-60">
-                                    <img
-                                        src="/style/images/slide-dao-taoo-3.png"
-                                        alt=""
-                                        class="img-fluid w-100"
-                                    />
-                                </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
-                            </div>
-                        </div>
-                        <div
-                            class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
-                        >
-                            <div class="item-slide-dao-tao border-0 px-2">
-                                <div class="img h-60">
-                                    <img
-                                        src="/style/images/slide-dao-tao-4.png"
-                                        alt=""
-                                        class="img-fluid w-100"
-                                    />
-                                </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
-                            </div>
-                        </div>
-                        <div
-                            class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
-                        >
-                            <div class="item-slide-dao-tao border-0 px-2">
-                                <div class="img h-60">
-                                    <img
-                                        src="/style/images/slide-dao-tao-4.png"
-                                        alt=""
-                                        class="img-fluid w-100"
-                                    />
-                                </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
-                            </div>
-                        </div>
-                        <div
-                            class="item-slide col-12 col-sm-6 col-md-4 col-lg-3 mt-3 mt-md-0"
-                        >
-                            <div class="item-slide-dao-tao border-0 px-2">
-                                <div class="img h-60">
-                                    <img
-                                        src="/style/images/slide-dao-tao-4.png"
-                                        alt=""
-                                        class="img-fluid w-100"
-                                    />
-                                </div>
-                                <p class="text-center fw-bold">Bảo vệ thực vật</p>
-                            </div>
-                        </div>
+                        @endforeach
+                        @endif
                     </div>
                     <button class="btn-next ms-2">
                         <img src="/style/images/circle-right-solid.png" alt="" />
