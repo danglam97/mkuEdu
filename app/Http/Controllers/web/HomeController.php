@@ -58,4 +58,13 @@ class HomeController extends BaseWebController
     {
         return view('web.404.error');
     }
+    public function postEvent (){
+        return view('web.post_event.detail');
+    }
+    public function detailPostEvent ($slug){
+        return view('web.post_event.detail');
+    }
+    public function category (){
+        return view('web.post_event.detail');
+    }
 }

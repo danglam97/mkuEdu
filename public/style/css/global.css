@@ -1,0 +1,21 @@
+body {
+  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+a {
+  text-decoration: none !important;
+}
+
+.cover-img {
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}

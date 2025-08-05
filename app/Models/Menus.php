@@ -39,7 +39,7 @@ class Menus extends Model
 
     public function children()
     {
-        return $this->hasMany(__CLASS__, 'id_parent');
+        return $this->hasMany(__CLASS__, 'id_parent')->with('children');
     }
     public static function groupedCategories(): array
     {

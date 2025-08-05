@@ -1,0 +1,118 @@
+
+.clearfix {
+    clear: both;
+}
+.mku-megamenu ul li {
+     list-style: none !important;
+}
+.mku-megamenu > ul {
+    margin: 0px;
+    padding: 0px;
+}
+.mku-megamenu > ul li > ul  {
+    margin: 0px;
+    padding: 0px;
+}
+.halfmenu {
+    width: 100%;
+    /* right: auto !important;
+    left: auto !important; */
+}
+
+.mku-menu {
+    color: #fff;
+    /* font-size: 1rem; */
+    padding: 0;
+    /* display: block; */
+    background-color: rgba(31, 34, 81, 0.5) !important;
+
+}
+.mku-menu-list {
+    text-align: left;
+    margin: 0 auto 0 auto;
+    width: 100%;
+    /* display: block; */
+    padding: 0;
+}
+
+.mku-megamenu {
+    display: none;
+    width: 100%;
+    left: 0px;
+    position: absolute;
+    top: calc(100% + 3px);
+    color: #000;
+    z-index: 1000;
+    margin: 0px;
+    text-align: left;
+    padding: 14px 1rem;
+    border: solid 1px #eeeeee;
+    background-color: #fff;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.mku-megamenu .title{
+    border-bottom: 1px solid #CCC;
+    font-size: 1.1rem;
+    padding: 5px 5px 5px 0px;
+    /* color: #424242; */
+    margin: 0px 0px 5px 0px;
+    text-align: left;
+    /* height: 39px; */
+    /* color: #1F2251; */
+    color: #FD6504;
+    font-family: "SVN-Gotham-Regular";
+}
+.mku-megamenu a{
+    display: block;
+    color: #13163f !important;
+    font-size: 1rem;
+    padding-left: .5rem;
+    transition: .3s all;
+}
+.mku-megamenu ul > li{
+    padding: .35rem 0 ;
+    display: flex;
+    align-items: baseline;
+    /* border-bottom: 1px solid #f6f5f5; */
+}
+.mku-megamenu ul > li i.fa-angle-right {
+    transition: .3s all;
+    font-size: .75rem;
+    color: #424242;
+}
+.mku-megamenu li:hover a,
+.mku-megamenu li:hover i
+{
+    color: #FD6504 !important;
+}
+
+.mku-megamenu ul {
+    max-width: 18rem;
+}
+.is-menu-active{
+    color: "yellow";
+    border-bottom: 3px solid #FD6504 ;
+}
+
+@media screen and (min-width: 280px) and (max-width: 576px)  {  
+    html,body{
+        font-size: 12px !important;
+    }
+    p.sologan{
+        font-size: .9rem;
+    }
+
+    .mku-menu-list li.nav-item{
+        position: relative;
+        display: block;
+        height: auto;
+    }
+    .mku-megamenu {
+        position: relative;
+    }
+    .navbar-light .navbar-toggler-icon {
+        filter: invert(1);
+    }
+
+}

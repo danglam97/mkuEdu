@@ -10,24 +10,15 @@ use App\Services\Web\Menu\MenuServiceInterface;
 class MenuService implements MenuServiceInterface
 {
 
-    public function getMenuTree()
+    public function getMenuTree($parentId = null)
     {
-
-        // Lấy tất cả menu đã duyệt
-        $menus = Menus::where('is_active', MenuIsActive::Approved->value)
+        return Menus::where('id_parent', $parentId)
             ->orderBy('position')
-            ->orderBy('name')
-            ->get(['id', 'id_parent', 'name', 'slug', 'type']);;
-        return $this->buildTree($menus);
-    }
-
-    private function buildTree($menus, $parentId = null)
-    {
-        return $menus->where('id_parent', $parentId)
-            ->map(function ($menu) use ($menus) {
-                $menu->children = $this->buildTree($menus, $menu->id);
-                return $menu;
-            })->values();
+            ->with(['children' => function ($query) {
+                $query->orderBy('position')
+                    ->with('children');
+            }])
+            ->get();
     }
 
     public function getMenuTrain()

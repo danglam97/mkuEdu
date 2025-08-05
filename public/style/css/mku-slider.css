@@ -1,0 +1,182 @@
+.banner-index {
+    font-size: 1rem;
+    height: 650px;
+    position: relative;
+    position: relative;
+    max-height: 650px;
+    min-height: 650px;
+    background-color: #ccc;
+    z-index: 1;
+}
+
+.banner-index h2 {
+    font-size: 1em;
+}
+
+.banner-index .sub-title {
+    font-size: 3.5em;
+    color: #43782b;
+    font-family: 'SVN-Artful Beauty';
+    font-weight: normal;
+    margin-top: .5em;
+}
+
+.banner-index .note {
+    width: 80%;
+    height: 80px;
+    margin-top: -2em;
+}
+
+
+.btn-custom-01 {
+    display: inline-block;
+    padding: .4em 1.8em;
+    background: #aabc44;
+    color: #000;
+    font-size: .9em;
+    margin-left: 0;
+    text-decoration: none;
+    border: none;
+}
+
+.banner-index .slick-dotted.slick-slider {
+    margin: 0;
+}
+
+.banner-index .banner-item {
+    background-size:cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 3em 0;
+    height: 650px;
+}
+
+.banner-index .banner-caption {
+    padding: 0 2em;
+}
+
+.banner-index .slick-dots {
+    bottom: 0 !important;
+}
+
+.slick-dots li.slick-active button, .slick-dots li button {
+    color: #fff;
+    opacity: 1;
+    border-radius: 100%;
+    border: 1.5px solid #aabc44;
+    width: 16px;
+    height: 16px;
+    position: relative;
+}
+
+.slick-dots li button:before {
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    content: "";
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.slick-dots li.slick-active button:before {
+    background: #aabc44;
+}
+
+.slick-dots li {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 8px;
+    padding: 0;
+    cursor: pointer;
+}
+
+.banner-index .banner .slick-next {
+    right: 8px;
+}
+
+.banner-index .banner .slick-prev {
+    left: 8px;
+}
+
+.slick-prev,
+.slick-next {
+    z-index: 1000;
+}
+
+.banner .slick-arrow::before {
+    color: #aabc44;
+    font-size: 24px;
+   
+}
+
+#_spnb {
+    background: #fff;
+    padding: 2em 0 0 0;
+}
+
+#_spnb h2.heading {
+    margin-bottom: 1em;
+}
+
+#_spnb .product-slick {
+    margin: 0 2em;
+}
+
+#_spnb .rounded-circle {
+    border: 1px solid #e7e7e7;
+}
+
+#_spnb div.item > img {
+    width: 100%;
+}
+
+#_spnb div.item > h3 {
+    text-align: center;
+}
+
+#_spnb div.item > h3 a {
+    display: block;
+    text-transform: uppercase;
+    padding: 10px 0px;
+    text-align: center;
+    color: #000000;
+    font-size: 18px;
+}
+
+#_spnb .slick-prev, #_spnb .slick-next {
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    top: 41%;
+    display: block;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    cursor: pointer;
+    color: transparent;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+#_spnb img.imgBx {
+    width: 4em;
+    left: 0;
+    bottom: -4em;
+    z-index: 1;
+}
+
+#_spnb img.imgBx1 {
+    width: 2em;
+    height: auto;
+    right: 1em;
+    top: 0;
+}

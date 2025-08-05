@@ -21,7 +21,11 @@
     <!-- CSS Font Awesome (icon) -->
     <link rel="stylesheet" href="{{ asset('/style/css/fontawesome/fontawesome-free-6.7.2-web/css/all.min.css')}}" />
 
-    <link rel="stylesheet" href="{{ asset('/style/css/style.css')}}" />
+    <link rel="stylesheet" href="{{ asset('/style/css/global.css')}}" />
+    <link rel="stylesheet" href="{{ asset('/style/css/mku-fonts.css')}}" />
+    <link rel="stylesheet" href="{{ asset('/style/css/mku-menu.css')}}">
+    <link rel="stylesheet" href="{{ asset('/style/css/mku-style.css')}}" />
+    <link rel="stylesheet" href="{{ asset('/style/css/mku-slider.css')}}" />
 </head>
 <style>
     #loading-overlay {
@@ -85,20 +89,58 @@
 <body>
 <div id="loading-overlay">
     <div class="loading-content">
-        <img src="{{ asset('/style/images/logo-truong.png') }}" alt="Logo" class="loading-logo">
+        <img src="{{ asset('/style/images/logo-truong.png') }}" alt="Logo" class="loading-logo"> {{-- Đổi logo nếu cần --}}
         <div class="loading-spinner"></div>
-        <p>Đang tải dữ liệu...</p>
+        <p>Đang tải trang, vui lòng chờ...</p>
     </div>
 </div>
-<section class="index">
 @include('web.layout.header')
 @yield('content')
-@include('web.layout.footer')
-</section>
-</body>
+{{--@include('web.layout.footer')--}}
+
+
+
 <script src="{{ asset('/style/js/jquery/jquery.js')}}"></script>
 <script src="{{ asset('/style/js/bootstrap/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{ asset('/style/js/slick/slick-1.8.1/slick/slick.min.js')}}"></script>
 <script src="{{ asset('/style/js/slide.js')}}"></script>
 <script src="{{ asset('/style/js/nav-coselap.js')}}"></script>
+<script>
+    $(".banner").slick({
+        dots: true,
+        infinite: true,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+    });
+    $("li.nav-item").click(function(){
+        $("li.nav-item").each(function(){
+            $(this).removeClass("is-menu-active")
+            $(this).children('.mku-megamenu').css("display","none");
+        })
+        $(this).addClass("is-menu-active")
+        if($(this).hasClass("is-menu-active")){
+            $(this).children('.mku-megamenu').css("display","block");
+        }
+    });
+    // $("a#open").click(function(e){
+    //   e.preventDefault();
+    //   let elm = $(this);
+    //   flag = !flag;
+    //   if(flag){
+    //     $(this).siblings('.mku-megamenu').css("display","none");
+    //   }
+    //   else{
+    //     $(this).siblings('.mku-megamenu').css("display","block");
+    //   }
+    //   $(this).css({
+    //     "color":"yellow",
+    //     "border-bottom":"1px solid #CCC"
+    //   })
+    // });
+</script>
+
+
+</body>
 </html>

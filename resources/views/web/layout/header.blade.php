@@ -1,102 +1,153 @@
-<div class="header">
-    <div class="small-head d-flex container">
-        <div class="row w-100 align-items-center">
-            <div class="col-4 d-flex align-items-center">
-                <img class="logo-DHCL me-2" src="/style/images/logo-truong.png" />
-                <p class="title-truong text-center">
-                    <span class="span">TRƯỜNG ĐẠI HỌC CỬU LONG<br /></span>
-                    <span class="text-wrapper-2"
-                    >Toàn diện – Sáng tạo – Hội nhập – Phát triển</span
-                    >
-                </p>
+<header>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-lg-4 my-2 my-lg-1">
+                <div class="d-flex align-items-center">
+                    <a href="" class="logo me-1">
+                        <img
+                            src="{{asset('/style/images/logo-truong.png')}}"
+                            alt="Trường đại học cửu long"
+                        />
+                    </a>
+                    <div class="d-flex align-items-center flex-column">
+                        <h4>TRƯỜNG ĐẠI HỌC CỬU LONG</h4>
+                        <p class="sologan">Toàn diện–Sáng tạo–Hội nhập–Phát triển</p>
+                    </div>
+                </div>
             </div>
-            <div class="col-8 d-flex justify-content-between">
-                <p class="element">
-                    <img
-                        class="vector me-2"
-                        src="https://c.animaapp.com/mdrent4ttKlpku/img/vector.svg"
-                    />02703832538
-                </p>
-
-                <p class="element">
-                    <img
-                        class="envelope-solid me-2"
-                        src="/style/images/envelope-solid.png"
-                    />cuulonguniversity@mku.edu.vn
-                </p>
-
-                <p class="element">
-                    <img
-                        class="hand-point-up-solid me-2"
-                        src="/style/images/hand-point-up-solid.png"
-                    />Tuyển sinh: Thông báo tuyển sinh Đại học hệ chính quy
-                </p>
+            <div class="col-12 col-lg-8 my-2 my-lg-1">
+                <div class="d-flex align-items-center justify-content-end flex-wrap">
+                    <p class="element d-flex align-items-center ms-3">
+                        <img
+                            class="vector me-1"
+                            src="https://c.animaapp.com/mdrent4ttKlpku/img/vector.svg"
+                        />
+                        <a href="tel:02703832538">02703832538</a>
+                    </p>
+                    <p class="element d-flex align-items-center ms-3">
+                        <img
+                            class="envelope-solid me-1"
+                            src="{{asset('/style/images/envelope-solid.png')}}"
+                        />
+                        <a href="mailto:cuulonguniversity@mku.edu.vn"
+                        >cuulonguniversity@mku.edu.vn</a
+                        >
+                    </p>
+                    <p class="element d-flex align-items-center ms-3">
+                        <img
+                            class="hand-point-up-solid me-1"
+                            src="{{asset('/style/images/hand-point-up-solid.png')}}"
+                        />
+                        Tuyển sinh: Thông báo tuyển sinh Đại học hệ chính quy
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="silder-banner">
-        <div class="overlap-2">
-            <div class="mask-group">
-                <div class="overlap-group-2 w-100 position-relative">
-                    <img
-                        class="IMG img-fluid w-100"
-                        src="/style/images/Silder-banner1.png"
-                    />
-                    <div class="nav-bar position-absolute top-0 z-index-1 w-100">
-                        <nav
-                            class="navbar navbar-expand-lg navbar-light text-white container"
-                        >
-                            <div class="container-fluid text-white fw-bold w-100">
-                                <!-- Brand hoặc logo -->
-                                <img
-                                    class="logo-DHCL-mobile"
-                                    src="/style/images/logo-truong.png"
-                                />
+</header>
+<section id="navBar" class="w-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mku-menu">
+        <div class="container">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav position-relative mku-menu-list">
+                    @foreach ($menus as $item)
+                        <li class="nav-item {{ $item->children->isNotEmpty() ? 'has-children' : '' }}">
+                            <a class="nav-link" href="#">{{ $item->name }}</a>
 
-                                <!-- Toggle button -->
-                                <button
-                                    class="navbar-toggler"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#navbarMobile"
-                                    aria-controls="navbarMobile"
-                                    aria-expanded="false"
-                                    aria-label="Toggle navigation"
-                                >
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
+                            @if ($item->children->isNotEmpty())
+                                <div class="mku-megamenu clearfix halfmenu container-fluid">
+                                    <div class="row d-flex">
+                                        @foreach ($item->children as $child)
+                                            <ul>
+                                                <li class="title mega-title">{{ $child->name }}</li>
 
-                                <!-- Collapsible nav items -->
-                                <div class="collapse navbar-collapse" id="navbarMobile">
-                                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                                        @include('web.layout.partials.menu-item',['menus'=>$menus])
-                                    </ul>
+                                                @if ($child->children->isNotEmpty())
+                                                    @foreach ($child->children as $subChild)
+                                                        <li>
+                                                            <i class="fa fa-angle-right"></i>
+                                                            <a href="{{ url($subChild->slug) }}">{{ $subChild->name }}</a>
+                                                        </li>
+                                                    @endforeach
+                                                @endif
+                                            </ul>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                        </nav>
-                    </div>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
 
-                    <div
-                        class="banner-bottom position-absolute start-50 bottom-0 translate-middle text-center"
-                    >
-                        <p class="text-wrapper text-white bold">
-                            Chào mừng đến với Trường Đại Học Cửu Long
-                        </p>
-                        <div class="btn">
-                            <a href="#">
-                                <img
-                                    class="circle-down-solid"
-                                    src="/style/images/circle-down-solid.png"
-                                /></a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="slideBar" class="banner-index">
+        <div class="banner-slider w-100">
+            <div class="banner slider w-100">
+                <div
+                    class="banner-item"
+                    style="background-image: url('{{asset('/style/images/banner/1.jpg')}}')"
+                >
+                    <div class="banner-caption container">
+                        <div class="content box">
+                            <h2 class="text-uppercase wow zoomInDown">H2 title</h2>
+                            <h2>
+                                <span class="sub-title"> Subtitle</span>
+                            </h2>
+                            <div class="note">Ghi chú</div>
+                            <a href="#" class="btn-custom-01 text-uppercase">
+                                Thử ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="banner-item"
+                    style="background-image: url('{{asset('/style/images/banner/2.jpg')}}')"
+                >
+                    <div class="banner-caption container">
+                        <div class="content box">
+                            <h2 class="text-uppercase wow zoomInDown">H2 title</h2>
+                            <h2>
+                                <span class="sub-title"> Subtitle</span>
+                            </h2>
+                            <div class="note">Ghi chú</div>
+                            <a href="#" class="btn-custom-01 text-uppercase">
+                                Thử ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="banner-item"
+                    style="background-image: url('{{asset('/style/images/banner/3.jpg')}}')"
+                >
+                    <div class="banner-caption container">
+                        <div class="content box">
+                            <h2 class="text-uppercase wow zoomInDown">H2 title</h2>
+                            <h2>
+                                <span class="sub-title"> Subtitle</span>
+                            </h2>
+                            <div class="note">Ghi chú</div>
+                            <a href="#" class="btn-custom-01 text-uppercase">
+                                Thử ngay
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- <img
-                class="rectangle-2"
-                src="https://c.animaapp.com/mdrent4ttKlpku/img/rectangle-29.png"
-              /> -->
         </div>
     </div>
-</div>
+</section>
