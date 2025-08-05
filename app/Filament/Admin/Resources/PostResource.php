@@ -74,7 +74,7 @@ class PostResource extends Resource implements HasShieldPermissions
                                         ->label('Hình ảnh đại diện')
                                         ->image()
                                         ->disk('public')
-                                        ->directory('news/images')
+                                        ->directory('post/images')
                                         ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']),
 
                                     Forms\Components\Select::make('id_category')
