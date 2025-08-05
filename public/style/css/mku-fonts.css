@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "SVN-Gotham-Regular";
+  src: url("../fonts/SVN-Gotham-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "SVN-Gotham-Bold";
+  src: url("../fonts/SVN-Gotham-Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "SVN-Gotham-Book";
+  src: url("../fonts/SVN-Gotham-Book.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
