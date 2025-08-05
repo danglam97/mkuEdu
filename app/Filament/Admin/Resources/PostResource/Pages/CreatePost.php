@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\PostResource\Pages;
 
 use App\Enums\Post\PostIsActive;
+use App\Enums\Post\PostStatus;
 use App\Filament\Admin\Resources\PostResource;
 use Carbon\Carbon;
 use Filament\Actions;
@@ -17,6 +18,7 @@ class CreatePost extends CreateRecord
         $data['created_date'] = Carbon::now(); // hoặc now()
         $data['created_by'] = Auth::id();      // lấy ID người dùng hiện tại
         $data['isactive'] = PostIsActive::Pending->value;
+        $data['status'] = PostStatus::Pending->value;
         return $data;
     }
 }

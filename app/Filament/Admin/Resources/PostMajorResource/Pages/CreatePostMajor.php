@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PostNewsResource\Pages;
+namespace App\Filament\Admin\Resources\PostMajorResource\Pages;
 
 use App\Enums\Post\PostIsActive;
 use App\Enums\Post\PostStatus;
-use App\Filament\Admin\Resources\PostNewsResource;
+use App\Filament\Admin\Resources\PostMajorResource;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
-class CreatePostNews extends CreateRecord
+class CreatePostMajor extends CreateRecord
 {
-    protected static string $resource = PostNewsResource::class;
+    protected static string $resource = PostMajorResource::class;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['created_date'] = Carbon::now(); // hoặc now()

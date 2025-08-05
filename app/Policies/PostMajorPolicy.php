@@ -2,11 +2,13 @@
 
 namespace App\Policies;
 
+use App\Enums\Post\PostStatus;
+use App\Models\Post;
 use App\Models\User;
-use App\Models\Major;
+use App\Models\PostMajor;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class MajorPolicy
+class PostMajorPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +17,15 @@ class MajorPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_major');
+        return $user->can('view_any_post::major');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Major $major): bool
+    public function view(User $user, PostMajor $postMajor): bool
     {
-        return $user->can('view_major');
+        return $user->can('view_post::major');
     }
 
     /**
@@ -31,23 +33,23 @@ class MajorPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_major');
+        return $user->can('create_post::major');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Major $major): bool
+    public function update(User $user, PostMajor $postMajor): bool
     {
-        return $user->can('update_major');
+        return $user->can('update_post::major');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Major $major): bool
+    public function delete(User $user, PostMajor $postMajor): bool
     {
-        return $user->can('delete_major');
+        return $user->can('delete_post::major');
     }
 
     /**
@@ -55,13 +57,13 @@ class MajorPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_major');
+        return $user->can('delete_any_post::major');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Major $major): bool
+    public function forceDelete(User $user, PostMajor $postMajor): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +79,7 @@ class MajorPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Major $major): bool
+    public function restore(User $user, PostMajor $postMajor): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +95,7 @@ class MajorPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Major $major): bool
+    public function replicate(User $user, PostMajor $postMajor): bool
     {
         return $user->can('{{ Replicate }}');
     }
@@ -104,5 +106,22 @@ class MajorPolicy
     public function reorder(User $user): bool
     {
         return $user->can('{{ Reorder }}');
+    }
+    public function approve(User $user, Post $post): bool
+    {
+        return $user->can('approve_post::major')
+            && in_array($post->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
+    }
+
+    public function refuse(User $user, Post $post): bool
+    {
+        return $user->can('refuse_post::major')
+            && in_array($post->status, [
+                PostStatus::Pending->value,
+                PostStatus::Waiting->value,
+            ]);
     }
 }

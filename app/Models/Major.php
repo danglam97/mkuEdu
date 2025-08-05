@@ -11,7 +11,7 @@ class Major extends Model
         'code',
         'description',
         'is_active',
-        'icon', 
+        'icon',
         'created_by',
         'updated_by',
     ];
@@ -22,5 +22,9 @@ class Major extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+    public function postMajors()
+    {
+        return $this->hasMany(PostMajor::class);
     }
 }

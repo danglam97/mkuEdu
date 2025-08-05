@@ -4,21 +4,17 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\Post\PostIsActive;
 use App\Enums\Post\PostStatus;
-use App\Filament\Admin\Resources\PostEventsResource\Pages;
-use App\Filament\Admin\Resources\PostEventsResource\RelationManagers;
+use App\Filament\Admin\Resources\PostMajorResource\Pages;
+use App\Filament\Admin\Resources\PostMajorResource\RelationManagers;
 use App\Forms\Components\CKEditor;
-use App\Models\CategoryEvents;
 use App\Models\CategoryNews;
-use App\Models\PostEvents;
-use App\Models\PostNews;
+use App\Models\Major;
+use App\Models\PostMajor;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,18 +22,19 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PostEventsResource extends Resource implements HasShieldPermissions
+class PostMajorResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
+    protected static ?string $model = PostMajor::class;
+    protected static ?string $modelLabel = 'Bài viết'; // customize ten cua model
+    protected static bool $hasTitleCaseModelLabel = false; // khong viet hoa chu cai dau tien trong ten cua model
 
-    protected static ?string $model = PostEvents::class;
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $modelLabel = 'Bài viết sự kiện';
-    protected static ?string $navigationIcon = 'heroicon-o-book-open';
-
-    protected static ?string $activeNavigationIcon = 'heroicon-o-book-open';
-    protected static ?string $navigationGroup = 'Quản lý sự kiện';
+    protected static ?string $activeNavigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Quản lý ngành học';
     protected static ?int $navigationSort = 2;
+
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -74,12 +71,12 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                                         ->label('Hình ảnh đại diện')
                                         ->image()
                                         ->disk('public')
-                                        ->directory('postEvents/images')
+                                        ->directory('postMajor/images')
                                         ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']),
 
                                     Forms\Components\Select::make('id_category')
                                         ->label('Danh mục tin')
-                                        ->options(self::getCategoryOptions())
+                                        ->relationship('major', 'name')
                                         ->searchable()
                                         ->preload()
                                         ->required(),
@@ -88,19 +85,6 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                                         ->label('Nội dung tin tức')
                                         ->required(),
 
-                                    Forms\Components\TextInput::make('link_url')
-                                        ->label('Link tập tin')
-                                        ->maxLength(550),
-                                    Forms\Components\Grid::make(2) // 2 cột
-                                    ->schema([
-                                        Forms\Components\DateTimePicker::make('start_datetime')
-                                            ->label('Ngày giờ bắt đầu')
-                                            ->seconds(false)->displayFormat('d/m/Y H:i'), // ẩn giây, chỉ chọn giờ:phút
-
-                                        Forms\Components\DateTimePicker::make('end_datetime')
-                                            ->label('Ngày giờ kết thúc')
-                                            ->seconds(false)->displayFormat('d/m/Y H:i'),
-                                    ]),
                                     Forms\Components\Grid::make(2) // 2 cột
                                     ->schema([
                                         Forms\Components\Toggle::make('is_home')
@@ -150,8 +134,8 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                     ->label('Hình ảnh')
                     ->disk('public'), // tùy thuộc cấu hình filesystem
 
-                Tables\Columns\TextColumn::make('category.name') // nếu bạn có quan hệ ->category()
-                ->label('Danh mục')
+                Tables\Columns\TextColumn::make('major.name') // nếu bạn có quan hệ ->category()
+                ->label('Ngành học')
                     ->sortable(),
 
                 Tables\Columns\BadgeColumn::make('isactive')
@@ -165,8 +149,9 @@ class PostEventsResource extends Resource implements HasShieldPermissions
             ]) ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('id_category')
-                    ->label('Danh mục tin tức')
-                    ->options(CategoryEvents::pluck('name', 'id')->toArray())->searchable(),
+                    ->label('Ngành học')
+                ->relationship('category', 'name')
+                    ->searchable(),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái')
                     ->options(PostStatus::options()),
@@ -185,7 +170,7 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                         ViewEntry::make('record')
                             ->label(false)
                             ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts_events.partials.contents'),
+                            ->view('filament.admin.posts_new.partials.contents'),
                     ]),
 
                 Tables\Actions\EditAction::make()
@@ -234,7 +219,7 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                             }),
                     ]),
 
-        Tables\Actions\Action::make('refuse')
+                Tables\Actions\Action::make('refuse')
                     ->tooltip('Từ chối bài viết')
                     ->iconButton()
                     ->icon('heroicon-o-x-circle')
@@ -288,27 +273,10 @@ class PostEventsResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPostEvents::route('/'),
-            'create' => Pages\CreatePostEvents::route('/create'),
-            'edit' => Pages\EditPostEvents::route('/{record}/edit'),
+            'index' => Pages\ListPostMajors::route('/'),
+            'create' => Pages\CreatePostMajor::route('/create'),
+            'edit' => Pages\EditPostMajor::route('/{record}/edit'),
         ];
-    }
-
-    public static function getCategoryOptions($categories = null, $prefix = ''): array
-    {
-        $categories = $categories ?? CategoryEvents::whereNull('id_parent')->with('children')->get();
-
-        $result = [];
-
-        foreach ($categories as $category) {
-            $result[$category->id] = $prefix . $category->name;
-
-            if ($category->children->count()) {
-                $result += self::getCategoryOptions($category->children, $prefix . '— ');
-            }
-        }
-
-        return $result;
     }
 
     public static function getNavigationBadge(): ?string

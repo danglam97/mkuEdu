@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\AlbumResource\Pages;
 use App\Filament\Admin\Resources\AlbumResource\RelationManagers;
 use App\Models\Album;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -143,5 +144,11 @@ class AlbumResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateAlbum::route('/create'),
             'edit' => Pages\EditAlbum::route('/{record}/edit'),
         ];
+    }
+    public static function getNavigationBadge(): ?string
+    {
+        return Utils::isResourceNavigationBadgeEnabled()
+            ? strval(static::getEloquentQuery()->count())
+            : null;
     }
 }
