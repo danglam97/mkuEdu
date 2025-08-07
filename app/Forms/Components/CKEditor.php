@@ -14,70 +14,52 @@ class CKEditor extends Field
 
     protected int $minLength = 0;
 
-    protected ?string $uploadUrl = null;
-
     protected string $placeholder = 'Type or paste your content here...';
-
-    public static function make(string $name = 'ckeditor', ?string $uploadUrl = null): static
-    {
-        return app(static::class, [
-            'name' => $name,
-            'uploadUrl' => $uploadUrl,
-        ]);
-    }
+    protected string | Closure | null $uploadUrl = null;
+    protected string | Closure | null $browseUrl = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->dehydrated(false);
+        $this->dehydrated(true);
+
+        // ✅ Mặc định tự động
+        $this->uploadUrl(fn () => route('ckeditor.upload'));
+        $this->browseUrl(fn () => url('/ckeditor/ckfinder/ckfinder.html'));
     }
 
-    public function uploadUrl(string | Closure | null $uploadUrl): self
-    {
-        $this->uploadUrl = $uploadUrl;
-
-        return $this;
-    }
-
-    public function content(string | Closure $content): self
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function name(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function placeholder(string $placeholder): self
+    public function placeholder(string | Closure $placeholder): static
     {
         $this->placeholder = $placeholder;
-
         return $this;
     }
 
-    public function getContent(): string
+    public function uploadUrl(string | Closure | null $url): static
     {
-        return $this->evaluate($this->content);
+        $this->uploadUrl = $url;
+        return $this;
     }
 
-    public function getName(): string
+    public function browseUrl(string | Closure | null $url): static
     {
-        return $this->name;
+        $this->browseUrl = $url;
+        return $this;
     }
 
     public function getPlaceholder(): string
     {
-        return $this->placeholder;
+        return $this->evaluate($this->placeholder);
     }
 
     public function getUploadUrl(): ?string
     {
         return $this->evaluate($this->uploadUrl);
     }
+
+    public function getBrowseUrl(): ?string
+    {
+        return $this->evaluate($this->browseUrl);
+    }
+
 }
