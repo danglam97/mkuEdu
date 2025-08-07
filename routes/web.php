@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\post_new\PostNewController;
-
+use Illuminate\Support\Facades\Storage;
 //web
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
@@ -37,3 +37,24 @@ Route::get('/admin/patients/{patient}/undo', function (Patient $patient) {
     return redirect()->route('filament.admin.resources.patients.index')
         ->with('success', 'Changes have been undone successfully.');
 })->name('admin.patients.undo')->middleware(['auth', 'web']);
+
+
+
+Route::post('/ckeditor/upload', function (Request $request) {
+    if ($request->hasFile('upload')) {
+        $file = $request->file('upload');
+        $path = $file->store('uploads', 'public');
+
+        return response()->json([
+            'uploaded' => 1,
+            'fileName' => $file->getClientOriginalName(),
+            'url' => asset('storage/' . $path),
+        ]);
+    }
+
+    return response()->json([
+        'uploaded' => 0,
+        'error' => ['message' => 'Upload failed']
+    ]);
+})->name('ckeditor.upload');
+
