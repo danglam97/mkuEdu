@@ -86,6 +86,7 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->validationMessages([
                                                 'required' => 'loại menu không được để trống.',
                                             ])
+                                        ->reactive()
                                             ->native(false)
                                             ->placeholder('Chọn loại menu'),
 
@@ -95,6 +96,16 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->searchable()
                                             ->preload()
                                             ->placeholder('Chọn menu cha'),
+                                    ]),
+                                Forms\Components\TextInput::make('url')
+                                    ->label('Liên kết menu')
+                                    ->placeholder('Nhập đường dẫn liên kết')
+                                    ->visible(fn (callable $get) => $get('type') == 0)
+                                    ->required(fn (callable $get) => $get('type') == 0)
+                                    ->rule('url')
+                                    ->validationMessages([
+                                        'required' => 'Đường dẫn liên kết là bắt buộc khi loại menu là Liên kết.',
+                                        'url' => 'Đường dẫn không hợp lệ (phải có dạng https://...)',
                                     ]),
 
                                 Forms\Components\FileUpload::make('icon')

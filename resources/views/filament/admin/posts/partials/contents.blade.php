@@ -46,6 +46,23 @@
             {{ \App\Enums\Post\PostStatus::tryFrom($record->status)?->getLabel() ?? 'Không xác định' }}
         </span>
             </p>
+            <div x-data="{ copied: false }" class="flex items-center gap-2 mt-1">
+        <p class="text-sm text-gray-500 font-medium">Đường dẫn bài viết:</p>
+        <input type="text"
+               readonly
+               :value="'{{ url("/tin-tuc/{$record->category->slug}/{$record->slug}") }}'"
+               class="text-sm text-gray-800 bg-gray-100 border rounded px-2 py-1 w-full max-w-xs cursor-text"
+               x-ref="postUrl"
+        >
+        <button
+            @click="navigator.clipboard.writeText($refs.postUrl.value); copied = true; setTimeout(() => copied = false, 2000)"
+            class="text-blue-600 hover:text-blue-800 transition"
+            title="Sao chép link bài viết"
+        >
+            📋
+        </button>
+        <span x-show="copied" x-transition class="text-green-600 text-sm">Đã sao chép!</span>
+    </div>
         </div>
         <div>
             <p class="text-sm text-gray-500 font-medium">

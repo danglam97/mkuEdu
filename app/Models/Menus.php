@@ -24,6 +24,7 @@ class Menus extends Model
         'updated_by',
         'is_active',
         'position',
+        'url',
     ];
     public static function booted()
     {

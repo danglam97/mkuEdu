@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Str;
 class Major extends Model
 {
     protected $fillable = [
@@ -14,6 +14,8 @@ class Major extends Model
         'icon',
         'created_by',
         'updated_by',
+        'slug'
+
     ];
     public function createdBy()
     {
@@ -26,5 +28,11 @@ class Major extends Model
     public function postMajors()
     {
         return $this->hasMany(PostMajor::class);
+    }
+    public static function booted()
+    {
+        static::saving(function ($post) {
+            $post->slug = Str::slug($post->name);
+        });
     }
 }

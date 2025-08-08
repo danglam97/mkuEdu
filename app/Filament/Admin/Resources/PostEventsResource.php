@@ -175,6 +175,20 @@ class PostEventsResource extends Resource implements HasShieldPermissions
                     ->options(PostIsActive::options())
             ])
             ->actions([
+                Tables\Actions\Action::make('copy_link')
+                ->label('Copy link')->iconButton()
+                ->icon('heroicon-o-clipboard')
+                ->color('gray')
+                ->tooltip('Hiển thị đường dẫn để copy')
+                ->action(function ($record) {
+                    $link = url("/tin-tuc/{$record->category->slug}/{$record->slug}");
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('Sao chép link bài viết')
+                        ->body("Bạn có thể sao chép đường dẫn sau:<br><strong>{$link}</strong>")
+                        ->success()
+                        ->send();
+                }),
                 Tables\Actions\ViewAction::make()
                     ->tooltip('Xem chi tiết')
                     ->iconButton()
