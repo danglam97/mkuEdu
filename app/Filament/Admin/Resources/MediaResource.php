@@ -63,12 +63,11 @@ class MediaResource extends Resource implements HasShieldPermissions
 
                         Forms\Components\Select::make('source')
                             ->label('Nguồn video')
-                            ->default('file')
-                            ->hidden()
+                            ->default('youtube')
                             ->required()
                             ->options([
+                                'youtube' => 'YouTube (nhúng link)',
                                 'file' => 'Tải lên file (.mp4)',
-                                'link' => 'Link YouTube / Vimeo',
                             ])
                             ->visible(fn ($get) => $get('type') === 'video')
                             ->requiredIf('type', 'video')
@@ -86,9 +85,13 @@ class MediaResource extends Resource implements HasShieldPermissions
                             ),
 
                         Forms\Components\TextInput::make('url')
-                            ->label('Link video')
-                            ->visible(fn ($get) => $get('type') === 'video' && $get('source') === 'link')
-                            ->required(fn ($get) => $get('type') === 'video' && $get('source') === 'link'),
+                            ->label('Link YouTube')
+                            ->placeholder('Ví dụ: https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx')
+                            ->visible(fn ($get) => $get('type') === 'video' && $get('source') === 'youtube')
+                            ->required(fn ($get) => $get('type') === 'video' && $get('source') === 'youtube')
+                            ->rules([
+                                'regex:/^(https?:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.be)\\\/.+/i'
+                            ]),
 
                         Forms\Components\FileUpload::make('thumbnail')
                             ->label('Ảnh đại diện')

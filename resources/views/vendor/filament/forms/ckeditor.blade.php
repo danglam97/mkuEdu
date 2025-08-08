@@ -11,6 +11,7 @@
 >
     <x-filament::input.wrapper :valid="$errors->count() === 0">
         <div wire:ignore>
+            {{-- CKEditor & CKFinder --}}
             <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
             <script src="{{ asset('ckeditor/ckfinder/ckfinder.js') }}"></script>
             <script>
@@ -42,8 +43,10 @@
                 x-data="{
                     state: $wire.$entangle('{{ $getStatePath() }}'),
                     init() {
-                        createCKEditor();
-                        this.state = ''; // Đảm bảo trạng thái ban đầu là rỗng
+                        // Khởi tạo với giá trị từ Livewire
+                        createCKEditor(this.state);
+
+                        // Khi nội dung CKEditor thay đổi -> cập nhật Livewire state
                         Livewire.on('contentUpdated', (payload) => {
                             this.state = payload.content;
                         });

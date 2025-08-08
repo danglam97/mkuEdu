@@ -15,6 +15,8 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -74,12 +76,13 @@ class PostMajorResource extends Resource implements HasShieldPermissions
                                         ->directory('postMajor/images')
                                         ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']),
 
-                                    Forms\Components\Select::make('id_category')
+                                        Forms\Components\Select::make('id_category')
                                         ->label('Danh mục tin')
                                         ->relationship('major', 'name')
                                         ->searchable()
                                         ->preload()
                                         ->required(),
+
 
                                     CKEditor::make('contents')
                                         ->label('Nội dung tin tức')
@@ -160,6 +163,20 @@ class PostMajorResource extends Resource implements HasShieldPermissions
                     ->options(PostIsActive::options())
             ])
             ->actions([
+                Tables\Actions\Action::make('copy_link')
+                ->label('Copy link')->iconButton()
+                ->icon('heroicon-o-clipboard')
+                ->color('gray')
+                ->tooltip('Hiển thị đường dẫn để copy')
+                ->action(function ($record) {
+                    $link = url("/tin-tuc/{$record->major?->slug}/{$record->slug}");
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('Sao chép link bài viết')
+                        ->body("Bạn có thể sao chép đường dẫn sau:<br><strong>{$link}</strong>")
+                        ->success()
+                        ->send();
+                }),
                 Tables\Actions\ViewAction::make()
                     ->tooltip('Xem chi tiết')
                     ->iconButton()
@@ -167,10 +184,23 @@ class PostMajorResource extends Resource implements HasShieldPermissions
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Đóng')
                     ->infolist([
-                        ViewEntry::make('record')
-                            ->label(false)
-                            ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts_new.partials.contents'),
+                        Section::make()
+                            ->schema([
+                                TextEntry::make('name')->label('Tên bài viết'),
+                                TextEntry::make('major.name')->label('Ngành'),
+                                TextEntry::make('description')->label('Mô tả')->markdown(),
+                                TextEntry::make('created_at')->label('Ngày tạo')->date('d/m/Y'),
+                                TextEntry::make('updated_at')->label('Ngày sửa')->date('d/m/Y'),
+                            ])
+                            ->columns(2),
+
+                        Section::make('Nội dung')
+                            ->schema([
+                                TextEntry::make('contents')
+                                    ->label('')
+                                    ->html()
+                                    ->columnSpanFull(),
+                            ]),
                     ]),
 
                 Tables\Actions\EditAction::make()
