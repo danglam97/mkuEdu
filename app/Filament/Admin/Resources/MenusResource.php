@@ -85,8 +85,7 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->required()
                                             ->validationMessages([
                                                 'required' => 'loại menu không được để trống.',
-                                            ])
-                                        ->reactive()
+                                            ]) ->columnSpan(fn (callable $get) => $get('type') == 0 ? 2 : 1)                                       ->reactive()
                                             ->native(false)
                                             ->placeholder('Chọn loại menu'),
 
@@ -95,7 +94,7 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->options(\App\Models\Menus::groupedCategories())
                                             ->searchable()
                                             ->preload()
-                                            ->placeholder('Chọn menu cha'),
+                                            ->placeholder('Chọn menu cha') ->visible(fn (callable $get) => $get('type') != 0),
                                     ]),
                                 Forms\Components\TextInput::make('url')
                                     ->label('Liên kết menu')
