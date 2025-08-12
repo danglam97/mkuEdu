@@ -71,12 +71,25 @@ class InternationalPostResource extends Resource implements HasShieldPermissions
                                     ->live(onBlur: true)
                                     ->placeholder('Nhập tiêu đề tin tức')
                                     ->columnSpan(12),
-                                Textarea::make('description')
+                                RichEditor::make('description')
                                     ->label('Mô tả ngắn')
-                                    ->rows(3)
                                     ->maxLength(1000)
                                     ->placeholder('Nhập mô tả ngắn...')
-                                    ->columnSpan(12),
+                                    ->columnSpan(12)->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
 
                                 FileUpload::make('image')
                                     ->label('Hình ảnh đại diện')

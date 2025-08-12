@@ -115,13 +115,35 @@ class MenusResource extends Resource implements HasShieldPermissions
                                     ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'])
                                     ->imageEditor(),
 
-                                Forms\Components\Textarea::make('notes')
+                                Forms\Components\RichEditor::make('notes')
                                     ->label('Ghi chú')
-                                    ->placeholder('Nhập ghi chú'),
+                                    ->placeholder('Nhập ghi chú')
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
 
-                                Forms\Components\Toggle::make('is_active')
-                                    ->label('Kích hoạt')
-                                    ->default(true),
+                                Forms\Components\Grid::make(2) // 2 cột
+                                    ->schema([
+                                        Forms\Components\Toggle::make('is_active')
+                                            ->label('Kích hoạt')
+                                            ->default(true),
+                                        Forms\Components\Toggle::make('is_showPosition')
+                                            ->label('Hiển thị vị trí')
+                                            ->default(true),
+                                    ]),
+
                                 Forms\Components\TextInput::make('position')
                                     ->label('Vị trí')
                                     ->numeric()

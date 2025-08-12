@@ -59,9 +59,23 @@ class MajorResource extends Resource implements HasShieldPermissions
                             ->label('Mã ngành học')
                             ->placeholder('Nhập mã ngành học')
                             ->hidden(),
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
-                            ->placeholder('Nhập mô tả'),
+                            ->placeholder('Nhập mô tả')->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
                         Forms\Components\Toggle::make('is_active')
                             ->label('Trạng thái')
                             ->default(true),

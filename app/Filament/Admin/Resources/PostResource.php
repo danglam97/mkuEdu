@@ -66,9 +66,23 @@ class PostResource extends Resource implements HasShieldPermissions
                                         ->required()
                                         ->maxLength(500),
 
-                                    Forms\Components\Textarea::make('description')
+                                    Forms\Components\RichEditor::make('description')
                                         ->label('Mô tả ngắn')
-                                        ->rows(3),
+                                        ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
 
                                     Forms\Components\FileUpload::make('image')
                                         ->label('Hình ảnh đại diện')
