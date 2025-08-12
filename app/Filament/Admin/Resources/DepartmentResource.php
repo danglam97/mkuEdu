@@ -82,9 +82,23 @@ class DepartmentResource extends Resource implements HasShieldPermissions
                                     ])
                                     ->columnSpan(2),
 
-                                Forms\Components\Textarea::make('description')
+                                Forms\Components\RichEditor::make('description')
                                     ->label('Mô tả')
-                                    ->rows(3)
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ])
                                     ->maxLength(1000)
                                     ->placeholder('Mô tả thêm về phòng ban (nếu có)')
                                     ->rules(['nullable', 'max:1000'])

@@ -98,9 +98,23 @@ class MediaResource extends Resource implements HasShieldPermissions
                             ->directory('media/thumbnails')
                             ->image()
                             ->imageEditor(),
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
-                            ->rows(3),
+                            ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
                     ])
                 ])
             ]);

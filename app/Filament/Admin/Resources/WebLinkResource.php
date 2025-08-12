@@ -45,11 +45,25 @@ class WebLinkResource extends Resource implements HasShieldPermissions
                                     ->placeholder('https://...'),
                             ]),
 
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
                             ->maxLength(500)
-                            ->rows(3)
-                            ->placeholder('Nhập mô tả ngắn cho liên kết...'),
+                            ->placeholder('Nhập mô tả ngắn cho liên kết...')
+                            ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'strike',
+                                        'underline',
+                                        'link',
+                                        'bulletList',
+                                        'orderedList',
+                                        'blockquote',
+                                        'codeBlock',
+                                        'h2',
+                                        'h3',
+                                        'undo',
+                                        'redo',
+                                    ]),
                     ])
                     ->columnSpanFull(),
 
