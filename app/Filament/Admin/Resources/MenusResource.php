@@ -85,7 +85,9 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->required()
                                             ->validationMessages([
                                                 'required' => 'loại menu không được để trống.',
-                                            ]) ->columnSpan(fn (callable $get) => $get('type') == 0 ? 2 : 1)                                       ->reactive()
+                                            ])
+                                            ->columnSpan(fn (callable $get) => $get('type') == 0 ? 2 : 1)
+                                            ->reactive()
                                             ->native(false)
                                             ->placeholder('Chọn loại menu'),
 
@@ -94,7 +96,8 @@ class MenusResource extends Resource implements HasShieldPermissions
                                             ->options(\App\Models\Menus::groupedCategories())
                                             ->searchable()
                                             ->preload()
-                                            ->placeholder('Chọn menu cha') ->visible(fn (callable $get) => $get('type') != 0),
+                                            ->placeholder('Chọn menu cha')
+                                            ->visible(fn (callable $get) => $get('type') != 0),
                                     ]),
                                 Forms\Components\TextInput::make('url')
                                     ->label('Liên kết menu')
@@ -134,7 +137,7 @@ class MenusResource extends Resource implements HasShieldPermissions
                                         'redo',
                                     ]),
 
-                                Forms\Components\Grid::make(2) // 2 cột
+                                Forms\Components\Grid::make(2)
                                     ->schema([
                                         Forms\Components\Toggle::make('is_active')
                                             ->label('Kích hoạt')
@@ -174,7 +177,6 @@ class MenusResource extends Resource implements HasShieldPermissions
                             ]),
                     ])
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -194,30 +196,6 @@ class MenusResource extends Resource implements HasShieldPermissions
                     ->sortable()
                     ->placeholder('—'),
 
-                // Người tạo
-                Tables\Columns\TextColumn::make('createdBy.name') // assuming quan hệ với User
-                ->label('Người tạo')
-                    ->sortable()
-                    ->placeholder('—'),
-
-                // Người sửa
-                Tables\Columns\TextColumn::make('updatedBy.name') // assuming quan hệ với User
-                ->label('Người sửa')
-                    ->sortable()
-                    ->placeholder('—'),
-
-                // Thời gian tạo
-                Tables\Columns\TextColumn::make('created_date')
-                    ->label('Ngày tạo')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-
-                // Thời gian sửa
-                Tables\Columns\TextColumn::make('updated_date')
-                    ->label('Ngày sửa')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-
                 // Trạng thái (Hiển thị / Ẩn)
                 Tables\Columns\BadgeColumn::make('is_active') // hoặc 'status'
                 ->label('Trạng thái')
@@ -227,11 +205,72 @@ class MenusResource extends Resource implements HasShieldPermissions
                     ->formatStateUsing(fn ($state) => $state ? 'Nội dung' : 'Liên kết'),
                 Tables\Columns\TextColumn::make('position')
                     ->label('Vị trí')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(function ($record) {
+                        $parentName = $record->parent ? $record->parent->name : 'Menu gốc';
+                        return "{$parentName} - Vị trí: {$record->position}";
+                    })
+                    ->description(fn ($record) => $record->parent ? "Thuộc: {$record->parent->name}" : 'Menu gốc')
+                    ->limit(25)
+                    ->tooltip(function ($record) {
+                        $parentName = $record->parent ? $record->parent->name : 'Menu gốc';
+                        return "{$parentName} - Vị trí: {$record->position}";
+                    }),
             ])
             ->defaultSort('position')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('id_parent')
+                    ->label('Menu cha')
+                    ->options(\App\Models\Menus::groupedCategories())
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Chọn menu cha để lọc')
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (! $data['value']) {
+                            return $query;
+                        }
+                        
+                        // Chỉ hiển thị các menu con, không hiển thị menu cha
+                        return $query->where('id_parent', $data['value']);
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['value']) {
+                            return null;
+                        }
+                        
+                        $parent = \App\Models\Menus::find($data['value']);
+                        return $parent ? "Menu cha: {$parent->name}" : null;
+                    }),
+
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('Loại menu')
+                    ->options([
+                        0 => 'Liên kết',
+                        1 => 'Nội dung',
+                    ])
+                    ->placeholder('Chọn loại menu để lọc')
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['value']) {
+                            return null;
+                        }
+                        
+                        return $data['value'] == 1 ? 'Loại: Nội dung' : 'Loại: Liên kết';
+                    }),
+
+                Tables\Filters\SelectFilter::make('is_active')
+                    ->label('Trạng thái')
+                    ->options([
+                        1 => 'Hoạt động',
+                        0 => 'Không hoạt động',
+                    ])
+                    ->placeholder('Chọn trạng thái để lọc')
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['value']) {
+                            return null;
+                        }
+                        
+                        return $data['value'] == 1 ? 'Trạng thái: Hoạt động' : 'Trạng thái: Không hoạt động';
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -293,6 +332,47 @@ class MenusResource extends Resource implements HasShieldPermissions
                         ]),
                     ]),
                 Tables\Actions\EditAction::make()->iconButton()->tooltip('chỉnh sửa'),
+
+                // Action thay đổi vị trí menu
+                Tables\Actions\Action::make('moveUp')
+                    ->label('Lên trên')
+                    ->icon('heroicon-o-arrow-up')
+                    ->iconButton()
+                    ->tooltip('Di chuyển lên trên')
+                    ->color('success')
+                    ->visible(function ($record) {
+                        $observer = app(\App\Observers\MenusObserver::class);
+                        return $observer->canMoveUp($record);
+                    })
+                    ->action(function ($record) {
+                        $observer = app(\App\Observers\MenusObserver::class);
+                        $observer->moveUp($record);
+                        Notification::make()
+                            ->title('Thành công')
+                            ->body('Đã di chuyển menu lên trên')
+                            ->success()
+                            ->send();
+                    }),
+
+                Tables\Actions\Action::make('moveDown')
+                    ->label('Xuống dưới')
+                    ->icon('heroicon-o-arrow-down')
+                    ->iconButton()
+                    ->tooltip('Di chuyển xuống dưới')
+                    ->color('warning')
+                    ->visible(function ($record) {
+                        $observer = app(\App\Observers\MenusObserver::class);
+                        return $observer->canMoveDown($record);
+                    })
+                    ->action(function ($record) {
+                        $observer = app(\App\Observers\MenusObserver::class);
+                        $observer->moveDown($record);
+                        Notification::make()
+                            ->title('Thành công')
+                            ->body('Đã di chuyển menu xuống dưới')
+                            ->success()
+                            ->send();
+                    }),
 
                 Tables\Actions\DeleteAction::make()
                     ->iconButton()->tooltip('xóa')

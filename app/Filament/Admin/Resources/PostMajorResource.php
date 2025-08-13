@@ -88,7 +88,7 @@ class PostMajorResource extends Resource implements HasShieldPermissions
                                         ->image()
                                         ->disk('public')
                                         ->directory('postMajor/images')
-                                        ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp']),
+                                        ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])->imageEditor(),
 
                                         Forms\Components\Select::make('id_category')
                                         ->label('Danh mục tin')

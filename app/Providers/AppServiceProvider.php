@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Banner;
+use App\Models\Menus;
 use App\Observers\BannerObserver;
+use App\Observers\MenusObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Banner::observe(BannerObserver::class);
+        Menus::observe(MenusObserver::class);
     }
 }
