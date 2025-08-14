@@ -48,79 +48,78 @@ class MenusResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make('Tạo/Cập nhật menu')
-                    ->columnSpanFull()
-                    ->tabs([
-                        // Tab 1: Thông tin chính
-                        Forms\Components\Tabs\Tab::make('Thông tin chính')
+                Forms\Components\Section::make('Thông tin cơ bản')
+                    ->description('Nhập thông tin cơ bản của menu')
+                    ->icon('heroicon-o-information-circle')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Tên menu')
+                            ->placeholder('Nhập tên menu')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->columnSpanFull()
+                            ->validationMessages([
+                                'required' => 'Tên menu không được để trống.',
+                                'max' => 'Tên menu không được vượt quá :max ký tự.',
+                                'unique' => 'Tên menu đã tồn tại.',
+                            ]),
+
+                        Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\Grid::make(1)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('name')
-                                            ->label('Tên menu')
-                                            ->placeholder('Nhập tên menu')
-                                            ->markAsRequired()
-                                            ->rules([
-                                                'required',
-                                                'max:255',
-                                                fn($record) => $record
-                                                    ? "unique:menus,name,{$record->id}"
-                                                    : 'unique:menus,name',
-                                            ])
-                                            ->validationMessages([
-                                                'required' => 'Tên menu không được để trống.',
-                                                'max' => 'Tên menu không được vượt quá :max ký tự.',
-                                                'unique' => 'Tên menu đã tồn tại.',
-                                            ]),
-                                    ]),
-
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\Select::make('type')
-                                            ->label('Loại menu')
-                                            ->options([
-                                                0 => 'Liên kết',
-                                                1 => 'Nội dung',
-                                            ])
-                                            ->required()
-                                            ->validationMessages([
-                                                'required' => 'loại menu không được để trống.',
-                                            ])
-                                            ->columnSpan(fn (callable $get) => $get('type') == 0 ? 2 : 1)
-                                            ->reactive()
-                                            ->native(false)
-                                            ->placeholder('Chọn loại menu'),
-
-                                        Forms\Components\Select::make('id_parent')
-                                            ->label('menu cha')
-                                            ->options(\App\Models\Menus::groupedCategories())
-                                            ->searchable()
-                                            ->preload()
-                                            ->placeholder('Chọn menu cha')
-                                            ->visible(fn (callable $get) => $get('type') != 0),
-                                    ]),
-                                Forms\Components\TextInput::make('url')
-                                    ->label('Liên kết menu')
-                                    ->placeholder('Nhập đường dẫn liên kết')
-                                    ->visible(fn (callable $get) => $get('type') == 0)
-                                    ->required(fn (callable $get) => $get('type') == 0)
-                                    ->rule('url')
+                                Forms\Components\Select::make('type')
+                                    ->label('Loại menu')
+                                    ->options([
+                                        0 => 'Liên kết',
+                                        1 => 'Nội dung',
+                                    ])
+                                    ->required()
+                                    ->reactive()
+                                    ->native(false)
+                                    ->placeholder('Chọn loại menu')
                                     ->validationMessages([
-                                        'required' => 'Đường dẫn liên kết là bắt buộc khi loại menu là Liên kết.',
-                                        'url' => 'Đường dẫn không hợp lệ (phải có dạng https://...)',
+                                        'required' => 'Loại menu không được để trống.',
                                     ]),
 
-                                Forms\Components\FileUpload::make('icon')
-                                    ->label('Icon')
-                                    ->image()
-                                    ->disk('public')
-                                    ->directory('menues/images')
-                                    ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'])
-                                    ->imageEditor(),
+                                Forms\Components\Select::make('id_parent')
+                                    ->label('Menu cha')
+                                    ->options(\App\Models\Menus::groupedCategories())
+                                    ->searchable()
+                                    ->preload()
+                                    ->placeholder('Chọn menu cha (tùy chọn)'),
+                            ]),
+
+                        Forms\Components\TextInput::make('url')
+                            ->label('Liên kết menu')
+                            ->placeholder('Nhập đường dẫn liên kết')
+                            ->visible(fn (callable $get) => $get('type') == 0)
+                            ->required(fn (callable $get) => $get('type') == 0)
+                            ->url()
+                            ->validationMessages([
+                                'required' => 'Đường dẫn liên kết là bắt buộc khi loại menu là Liên kết.',
+                                'url' => 'Đường dẫn không hợp lệ (phải có dạng https://...)',
+                            ])
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Hình ảnh & Mô tả')
+                    ->description('Thêm icon và mô tả cho menu')
+                    ->icon('heroicon-o-photo')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                                        Forms\Components\FileUpload::make('icon')
+                            ->label('Icon menu')
+                            ->image()
+                            ->disk('public')
+                            ->directory('menus/icons')
+                            ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'])
+                            ->imageEditor()
+                            ->columnSpan(1),
 
                                 Forms\Components\RichEditor::make('notes')
                                     ->label('Ghi chú')
-                                    ->placeholder('Nhập ghi chú')
+                                    ->placeholder('Nhập mô tả hoặc ghi chú cho menu')
                                     ->toolbarButtons([
                                         'bold',
                                         'italic',
@@ -135,47 +134,84 @@ class MenusResource extends Resource implements HasShieldPermissions
                                         'h3',
                                         'undo',
                                         'redo',
-                                    ]),
+                                    ])
+                                    ->columnSpan(2),
+                            ]),
+                    ]),
 
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\Toggle::make('is_active')
-                                            ->label('Kích hoạt')
-                                            ->default(true),
-                                        Forms\Components\Toggle::make('is_showPosition')
-                                            ->label('Hiển thị vị trí')
-                                            ->default(true),
-                                    ]),
+                Forms\Components\Section::make('Cài đặt hiển thị')
+                    ->description('Cấu hình cách hiển thị menu')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Toggle::make('is_active')
+                                    ->label('Kích hoạt menu')
+                                    ->default(true),
+
+                                Forms\Components\Toggle::make('is_showPosition')
+                                    ->label('Hiển thị vị trí')
+                                    ->default(true),
 
                                 Forms\Components\TextInput::make('position')
-                                    ->label('Vị trí')
+                                    ->label('Vị trí hiển thị')
                                     ->numeric()
                                     ->minValue(1)
                                     ->placeholder('VD: 1, 2, 3...')
                                     ->default(function () {
                                         return \App\Models\Menus::max('position') + 1;
-                                    })
-                                    ->helperText('Giá trị nhỏ hơn sẽ hiển thị trước'),
+                                    }),
                             ]),
+                    ]),
 
-                        // Tab 2: SEO
-                        Forms\Components\Tabs\Tab::make('Thông tin SEO')
-                            ->schema([
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('meta_title')
-                                            ->label('Meta Title'),
+                Forms\Components\Section::make('Thông tin SEO')
+                    ->description('Tối ưu hóa cho công cụ tìm kiếm')
+                    ->icon('heroicon-o-magnifying-glass')
+                    ->schema([
+                        Forms\Components\RichEditor::make('meta_title')
+                            ->label('Meta Title')
+                            ->placeholder('Tiêu đề hiển thị trên kết quả tìm kiếm')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'strike',
+                                'underline',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->columnSpanFull(),
 
-                                        Forms\Components\TextInput::make('meta_keyword')
-                                            ->label('Meta Keyword'),
-                                    ]),
+                        Forms\Components\RichEditor::make('meta_description')
+                            ->label('Meta Description')
+                            ->placeholder('Mô tả ngắn gọn về menu')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'strike',
+                                'underline',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'undo',
+                                'redo',
+                            ])
+                            ->columnSpanFull(),
 
-                                Forms\Components\Textarea::make('meta_description')
-                                    ->label('Meta Description')
-                                    ->rows(3)
-                                    ->autosize(),
-                            ]),
-                    ])
+                        Forms\Components\RichEditor::make('meta_keyword')
+                            ->label('Meta Keywords')
+                            ->placeholder('Từ khóa tìm kiếm, phân cách bằng dấu phẩy')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'strike',
+                                'underline',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
