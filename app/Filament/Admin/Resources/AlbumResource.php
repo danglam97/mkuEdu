@@ -22,9 +22,9 @@ class AlbumResource extends Resource implements HasShieldPermissions
     protected static ?string $model = Album::class;
 
     protected static ?string $modelLabel = 'Quản lý Album ảnh';
-    protected static ?string $navigationIcon = 'heroicon-s-video-camera';
+    protected static ?string $navigationIcon = 'heroicon-s-photo';
 
-    protected static ?string $activeNavigationIcon = 'heroicon-s-video-camera';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-photo';
     protected static ?string $navigationGroup = 'Quản lý media';
     protected static ?int $navigationSort = 2;
 
@@ -47,7 +47,15 @@ class AlbumResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->label('Tên album')
-                            ->required(),
+                            ->required()
+                            ->placeholder('Nhập tên album')
+                            ->minLength(3)
+                            ->maxLength(255)
+                            ->validationMessages([
+                                'required' => 'Vui lòng nhập tên album.',
+                                'min' => 'Tên album phải có ít nhất 3 ký tự.',
+                                'max' => 'Tên album không được vượt quá 255 ký tự.',
+                            ]),
 
                         Forms\Components\Toggle::make('isactive')
                             ->label('Hiển thị')
@@ -67,7 +75,12 @@ class AlbumResource extends Resource implements HasShieldPermissions
                             ->label('Ảnh chính')
                             ->directory('uploads/albums')
                             ->image()
-                            ->required(),
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'Vui lòng chọn ảnh chính.',
+                                'mimes' => 'Chỉ chấp nhận file ảnh (jpg, jpeg, png, gif, webp).',
+                                'max_size' => 'Kích thước file không được vượt quá 2MB.',
+                            ]),
 
                         Forms\Components\Hidden::make('type')
                             ->default('main'),
@@ -75,29 +88,23 @@ class AlbumResource extends Resource implements HasShieldPermissions
 
                 Forms\Components\Section::make('Ảnh phụ')
                     ->schema([
-                        Forms\Components\Repeater::make('items')
-                            ->relationship('items')
-                            ->label('Danh sách ảnh phụ')
-                            ->addActionLabel('Thêm hình ảnh con')
-                            ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->label('Ảnh phụ')
-                                    ->directory('uploads/albums')
-                                    ->image()
-                                    ->required(),
-
-                                Forms\Components\Hidden::make('type')
-                                    ->default('sub'),
-
-                                Forms\Components\TextInput::make('order')
-                                    ->label('Thứ tự')
-                                    ->numeric()
-                                    ->default(0),
-                            ])
-                            ->minItems(0)
-                            ->maxItems(4)
-                            ->orderable('order')
-                            ->columns(2),
+                        Forms\Components\FileUpload::make('sub_images')
+                            ->label('Ảnh phụ')
+                            ->directory('uploads/albums')
+                            ->image()
+                            ->multiple()
+                            ->maxFiles(20)
+                            ->acceptedFileTypes(['image/*'])
+                            ->maxSize(2048) // 2MB
+                            ->helperText('Kéo thả hoặc chọn nhiều ảnh phụ cùng lúc (tối đa 20 ảnh)')
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'Vui lòng chọn ít nhất một ảnh phụ.',
+                                'min' => 'Vui lòng chọn ít nhất một ảnh phụ.',
+                                'max' => 'Bạn chỉ có thể chọn tối đa 20 ảnh phụ.',
+                                'mimes' => 'Chỉ chấp nhận file ảnh (jpg, jpeg, png, gif, webp).',
+                                'max_size' => 'Kích thước file không được vượt quá 2MB.',
+                            ]),
                     ]),
             ]);
     }
@@ -113,6 +120,11 @@ class AlbumResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('page')->label('Page hiển thị'),
                 Tables\Columns\TextColumn::make('position')->label('Vị trí'),
                 Tables\Columns\IconColumn::make('isactive')->label('Trạng thái')->boolean(),
+                Tables\Columns\TextColumn::make('sub_images_count')
+                    ->label('Số ảnh phụ')
+                    ->getStateUsing(function ($record) {
+                        return $record->items()->where('type', 'sub')->count();
+                    }),
 //                Tables\Columns\ViewColumn::make('images')
 //                    ->label('Hình ảnh')
 //                    ->view('admin.album.images'),
@@ -151,4 +163,8 @@ class AlbumResource extends Resource implements HasShieldPermissions
             ? strval(static::getEloquentQuery()->count())
             : null;
     }
+
+
+
+
 }
