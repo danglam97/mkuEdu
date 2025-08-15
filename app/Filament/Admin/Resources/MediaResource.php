@@ -46,58 +46,44 @@ class MediaResource extends Resource implements HasShieldPermissions
                 Forms\Components\Card::make([
                     Forms\Components\Grid::make(1)->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('Tiêu đề')
-                            ->placeholder('nhập tiêu đề media')
-                            ->required(),
-
-                        Forms\Components\Select::make('type')
-                            ->hidden()
-                            ->default('video')
-                            ->label('Loại media')
-                            ->options([
-                                'image' => 'Ảnh',
-                                'video' => 'Video',
-                            ])
-                            ->reactive()
-                            ->required(),
-
-                        Forms\Components\Select::make('source')
-                            ->label('Nguồn video')
-                            ->default('youtube')
+                            ->label('Tiêu đề video')
+                            ->placeholder('Nhập tiêu đề video')
                             ->required()
-                            ->options([
-                                'youtube' => 'YouTube (nhúng link)',
-                                'file' => 'Tải lên file (.mp4)',
-                            ])
-                            ->visible(fn ($get) => $get('type') === 'video')
-                            ->requiredIf('type', 'video')
-                            ->reactive(),
-
-                        Forms\Components\FileUpload::make('url')
-                            ->label('Tải video')
-                            ->directory('media')
-                            ->visible(fn ($get) =>
-                                ($get('type') === 'image') || ($get('type') === 'video' && $get('source') === 'file')
-                            )
-                            ->acceptedFileTypes(['image/*', 'video/mp4'])
-                            ->required(fn ($get) =>
-                                ($get('type') === 'image') || ($get('type') === 'video' && $get('source') === 'file')
-                            ),
+                            ->validationMessages([
+                                'required' => 'Vui lòng nhập tiêu đề video',
+                            ]),
 
                         Forms\Components\TextInput::make('url')
-                            ->label('Link YouTube')
+                            ->label('Link video')
                             ->placeholder('Ví dụ: https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx')
-                            ->visible(fn ($get) => $get('type') === 'video' && $get('source') === 'youtube')
-                            ->required(fn ($get) => $get('type') === 'video' && $get('source') === 'youtube')
+                            ->required()
                             ->rules([
-                                'regex:/^(https?:\\/\\/)?(www\\.)?(youtube\\.com|youtu\\.be)\\\/.+/i'
+                                'regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/i'
+                            ])
+                            ->validationMessages([
+                                'regex' => 'Link video phải là link YouTube hợp lệ. Ví dụ: https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx',
+                                'required' => 'Vui lòng nhập link video YouTube',
                             ]),
 
                         Forms\Components\FileUpload::make('thumbnail')
                             ->label('Ảnh đại diện')
                             ->directory('media/thumbnails')
                             ->image()
-                            ->imageEditor(),
+                            ->multiple(false)
+                            ->maxFiles(1)
+                            ->validationMessages([
+                                'image' => 'File phải là hình ảnh hợp lệ',
+                                'max' => 'Chỉ được upload tối đa 1 ảnh',
+                            ]),
+
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Trạng thái hoạt động')
+                            ->default(true)
+                            ->onColor('success')
+                            ->offColor('danger')
+                            ->onIcon('heroicon-s-check')
+                            ->offIcon('heroicon-s-x-mark'),
+
                         Forms\Components\RichEditor::make('description')
                             ->label('Mô tả')
                             ->toolbarButtons([
@@ -125,16 +111,46 @@ class MediaResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')->label('Tiêu đề')->searchable(),
-                Tables\Columns\ImageColumn::make('thumbnails')
+                Tables\Columns\ImageColumn::make('thumbnail')
                     ->label('Hình ảnh')
                     ->disk('public'),
+                    Tables\Columns\BadgeColumn::make('is_active') // hoặc 'status'
+                    ->label('Trạng thái')
+                        ->formatStateUsing(fn ($state) => $state ? 'Hoạt động' : 'Không hoạt động'),
+
+                Tables\Columns\TextColumn::make('url')
+                    ->label('Link video')
+                    ->getStateUsing(fn ($record) => 'Xem video')
+                    ->url(fn ($record) => $record->url)
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-s-play')
+                    ->iconColor('primary')
+                    ->tooltip(fn ($record) => $record->url),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('is_active')
+                    ->label('Trạng thái hoạt động')
+                    ->placeholder('Tất cả')
+                    ->trueLabel('Đang hoạt động')
+                    ->falseLabel('Không hoạt động'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->tooltip('Sửa')->iconButton(),
-                Tables\Actions\DeleteAction::make()->iconButton()->tooltip('Xóa')->successNotificationTitle('Xóa media thành công'),
+                Tables\Actions\ViewAction::make()
+                    ->tooltip('Xem')
+                    ->iconButton()
+                    ->icon('heroicon-s-eye')
+                    ->color('info'),
+                Tables\Actions\EditAction::make()
+                    ->tooltip('Sửa')
+                    ->iconButton()
+                    ->icon('heroicon-s-pencil')
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make()
+                    ->tooltip('Xóa')
+                    ->iconButton()
+                    ->icon('heroicon-s-trash')
+                    ->color('danger')
+                    ->successNotificationTitle('Xóa media thành công'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()

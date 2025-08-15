@@ -9,13 +9,14 @@ class Media extends Model
     protected $table = 'medias';
     protected $fillable = [
         'title',
-        'type',
-        'source',
         'url',
         'thumbnail',
-        'page',
-        'position',
         'description',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
 }
