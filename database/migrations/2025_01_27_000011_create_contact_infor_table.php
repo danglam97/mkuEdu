@@ -50,6 +50,7 @@ return new class extends Migration
             $table->foreign('faculty_institute')->references('id')->on('menus')->onDelete('set null');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
+            $table->timestamps();
         });
     }
 
