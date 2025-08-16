@@ -189,7 +189,7 @@ class MajorResource extends Resource implements HasShieldPermissions
                     ]),
                 Tables\Filters\SelectFilter::make('faculty_institute')
                     ->label('Khoa/Viện')
-                    ->options(MenuHelper::getFacultyInstituteOptions()),
+                    ->options(MenuHelper::getFacultyInstituteOptions())->searchable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

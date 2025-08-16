@@ -68,6 +68,11 @@ class Major extends Model
         return $this->hasMany(PostMajor::class);
     }
 
+    public function lecturers()
+    {
+        return $this->hasMany(Lecturer::class);
+    }
+
     public static function booted()
     {
         static::saving(function ($major) {
