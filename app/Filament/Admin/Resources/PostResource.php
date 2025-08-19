@@ -18,6 +18,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Resource;
@@ -117,6 +118,15 @@ class PostResource extends Resource implements HasShieldPermissions
                                             ->inline()
                                             ->disabled(),
                                     ]),
+
+                                    Forms\Components\DateTimePicker::make('publish_date')
+                                        ->label('Ngày đăng bài')
+                                        ->helperText('Người viết bài có thể chọn ngày đăng')
+                                        ->displayFormat('d/m/Y H:i')
+                                        ->native(false)
+                                        ->seconds(false)
+                                        ->minDate(now())
+                                        ->default(now()),
                                 ]),
                             ]),
 
@@ -167,6 +177,24 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->label('Trạng thái bài viết')
                     ->sortable()
                     ->formatStateUsing(fn ($state) => PostStatus::tryFrom($state)?->getLabel() ?? ''),
+                
+                Tables\Columns\TextColumn::make('publish_date')
+                    ->label('Ngày đăng dự kiến')
+                    ->dateTime('d/m/Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                
+                Tables\Columns\TextColumn::make('approved_publish_date')
+                    ->label('Ngày đăng được duyệt')
+                    ->dateTime('d/m/Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                
+                Tables\Columns\TextColumn::make('approval_note')
+                    ->label('Ghi chú duyệt')
+                    ->limit(50)
+                    ->tooltip(fn ($record) => $record->approval_note)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ]) ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('id_category')
@@ -197,15 +225,7 @@ class PostResource extends Resource implements HasShieldPermissions
                 Tables\Actions\ViewAction::make()
                     ->tooltip('Xem chi tiết')
                     ->iconButton()
-                    ->modalHeading('Thông tin bài viết')
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Đóng')
-                    ->infolist([
-                        ViewEntry::make('record')
-                            ->label(false)
-                            ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts.partials.contents'),
-                    ]),
+                    ->url(fn ($record) => static::getUrl('view', ['record' => $record])),
 
                 Tables\Actions\EditAction::make()
                     ->tooltip('chỉnh sửa')
@@ -223,35 +243,8 @@ class PostResource extends Resource implements HasShieldPermissions
                     ->iconButton()
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->authorize(fn($record) => auth()->user()->can('approve', $record)) // ✅ Check Policy + trạng thái
-                    ->modalHeading('Xem chi tiết bài viết')
-                    ->modalSubmitAction(false) // Không có nút submit mặc định
-                    ->modalCancelActionLabel('Đóng')
-                    ->infolist([
-                        ViewEntry::make('record')
-                            ->label(false)
-                            ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts_events.partials.contents'),
-                    ])
-                    ->modalFooterActions(fn($record) => [
-                        Tables\Actions\Action::make('confirmApprove')
-                            ->label('Xác nhận duyệt')
-                            ->color('success')
-                            ->authorize(fn($record) => auth()->user()->can('approve', $record)) // Check lại trong nút confirm
-                            ->action(function ($record, Tables\Actions\Action $action) {
-                                $record->update([
-                                    'status' => PostStatus::Approved->value,
-                                    'approver_by' => auth()->id(),
-                                    'isactive' => PostIsActive::Approved->value,
-                                ]);
-                                $action->close();
-                                $action->dispatch('refreshTable');
-                                \Filament\Notifications\Notification::make()
-                                    ->title('Bài viết đã được duyệt')
-                                    ->success()
-                                    ->send();
-                            }),
-                    ]),
+                    ->authorize(fn($record) => auth()->user()->can('approve', $record))
+                    ->url(fn ($record) => static::getUrl('approve', ['record' => $record])),
 
                 Tables\Actions\Action::make('refuse')
                     ->tooltip('Từ chối bài viết')
@@ -267,7 +260,7 @@ class PostResource extends Resource implements HasShieldPermissions
                         ViewEntry::make('record')
                             ->label(false)
                             ->state(fn ($record) => $record)
-                            ->view('filament.admin.posts_events.partials.contents'),
+                            ->view('filament.admin.posts.partials.contents'),
                     ])
                     ->modalFooterActions(fn($record) => [
                         Tables\Actions\Action::make('confirmRefuse')
@@ -309,7 +302,9 @@ class PostResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListPosts::route('/'),
             'create' => Pages\CreatePost::route('/create'),
+            'view' => Pages\ViewPost::route('/{record}'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
+            'approve' => Pages\ApprovePost::route('/{record}/approve'),
         ];
     }
 

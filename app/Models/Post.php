@@ -7,6 +7,11 @@ use Illuminate\Support\Str;
 
 class Post extends Model
 {
+    protected $casts = [
+        'publish_date' => 'datetime',
+        'approved_publish_date' => 'datetime',
+    ];
+
     protected $fillable = [
         'name',
         'description',
@@ -28,6 +33,9 @@ class Post extends Model
         'isdelete',
         'isactive',
         'status',
+        'publish_date',
+        'approved_publish_date',
+        'approval_note',
     ];
 
     public static function booted()
