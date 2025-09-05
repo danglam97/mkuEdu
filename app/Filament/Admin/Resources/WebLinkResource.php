@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\WebLinkResource\Pages;
 use App\Models\WebLink;
+use App\Models\Menus;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
@@ -31,39 +32,33 @@ class WebLinkResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('title')
+                                Forms\Components\TextInput::make('name')
                                     ->label('Tên liên kết')
                                     ->required()
-                                    ->maxLength(255)
+                                    ->maxLength(500)
                                     ->placeholder('Nhập tên liên kết'),
 
-                                Forms\Components\TextInput::make('url')
+                                Forms\Components\TextInput::make('code')
+                                    ->label('Mã (tuỳ chọn)')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('link_url')
                                     ->label('Đường dẫn')
-                                    ->url()
-                                    ->required()
-                                    ->maxLength(500)
+                                    ->maxLength(550)
                                     ->placeholder('https://...'),
+
+                                Forms\Components\Select::make('faculty_institute')
+                                    ->label('Thuộc Khoa/Viện/Phòng ban')
+                                    ->options(\App\Helpers\MenuHelper::getFacultyInstituteOptions())
+                                    ->searchable()
+                                    ->preload()
+                                    ->nullable(),
                             ]),
 
-                        Forms\Components\RichEditor::make('description')
-                            ->label('Mô tả')
-                            ->maxLength(500)
-                            ->placeholder('Nhập mô tả ngắn cho liên kết...')
-                            ->toolbarButtons([
-                                        'bold',
-                                        'italic',
-                                        'strike',
-                                        'underline',
-                                        'link',
-                                        'bulletList',
-                                        'orderedList',
-                                        'blockquote',
-                                        'codeBlock',
-                                        'h2',
-                                        'h3',
-                                        'undo',
-                                        'redo',
-                                    ]),
+                        Forms\Components\RichEditor::make('contents')
+                            ->label('Nội dung chi tiết')
+                            ->placeholder('Nhập nội dung...')
+                            ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
 
@@ -77,13 +72,22 @@ class WebLinkResource extends Resource implements HasShieldPermissions
                             ->directory('weblinks/images')
                             ->imagePreviewHeight('150')
                             ->columnSpan(1),
-
-                        Forms\Components\Toggle::make('is_active')
+                            Forms\Components\TextInput::make('position')
+                            ->label('Thứ tự')
+                            ->numeric()
+                            ->default(0), 
+                        Forms\Components\Toggle::make('isactive')
                             ->label('Kích hoạt')
                             ->default(true)
                             ->columnSpan(1),
+
+                        Forms\Components\Toggle::make('is_home')
+                            ->label('Hiển thị trang chủ')
+                            ->default(false),
+
+                       
                     ])
-                    ->columns(1)
+                    ->columns(2)
             ]);
     }
 
@@ -95,20 +99,20 @@ class WebLinkResource extends Resource implements HasShieldPermissions
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Ảnh')
                     ->square()
-                    ->size(50) // Tăng nhẹ kích thước cho rõ hơn
+                    ->size(50)
                     ->circular(),
 
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('name')
                     ->label('Tên liên kết')
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('url')
+                Tables\Columns\IconColumn::make('link_url')
                     ->label('Link')
                     ->icon('heroicon-o-link')
-                    ->url(fn ($record) => $record->url, true) // true => mở tab mới
-                    ->tooltip(fn ($record) => $record->url),
+                    ->url(fn ($record) => $record->link_url, true)
+                    ->tooltip(fn ($record) => $record->link_url),
 
-                BadgeColumn::make('is_active')
+                BadgeColumn::make('isactive')
                     ->label('Trạng thái')
                     ->colors([
                         'success' => true,
