@@ -21,10 +21,8 @@ return new class extends Migration
             $table->string('major_id', 255)->nullable()->comment('Chuyên ngành đào tạo');
             $table->text('description')->nullable()->comment('Giới thiệu ngắn');
             $table->tinyInteger('isactive')->default(0)->comment('Trạng thái hoạt động (0: không hoạt động, 1: Hoạt động)');
-            
             $table->dateTime('created_date')->nullable()->comment('Ngày tạo');
             $table->dateTime('updated_date')->nullable()->comment('Ngày sửa');
-        
             $table->unsignedBigInteger('created_by')->nullable()->comment('Mã người tạo');
             $table->unsignedBigInteger('updated_by')->nullable()->comment('Mã người sửa');
             $table->timestamps();
@@ -39,3 +37,5 @@ return new class extends Migration
         Schema::dropIfExists('lecturers');
     }
 };
+
+

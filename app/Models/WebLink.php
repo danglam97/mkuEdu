@@ -12,21 +12,32 @@ class WebLink extends Model
     protected $table = 'web_links';
 
     protected $fillable = [
-        'title',
-        'url',
-        'description',
+        'name',
+        'code',
         'image',
+        'type',
+        'faculty_institute',
+        'contents',
+        'total_view',
+        'link_url',
+        'is_home',
+        'position',
+        'isdelete',
+        'isactive',
         'created_date',
         'updated_date',
         'created_by',
         'updated_by',
-        'is_active',
     ];
 
     protected $casts = [
         'created_date' => 'datetime',
         'updated_date' => 'datetime',
-        'is_active'    => 'boolean',
+        'isactive'     => 'boolean',
+        'is_home'      => 'boolean',
+        'isdelete'     => 'boolean',
+        'total_view'   => 'integer',
+        'position'     => 'integer',
     ];
 
     /**
@@ -44,6 +55,7 @@ class WebLink extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
     protected static function boot()
     {
         parent::boot();
@@ -60,5 +72,4 @@ class WebLink extends Model
             $model->updated_by = Auth::id();
         });
     }
-
 }
